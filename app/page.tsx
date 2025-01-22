@@ -44,7 +44,7 @@ export default function Home() {
             </div>
           </div>
 
-          <div className="grid gap-8 sm:grid-cols-2">
+          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             <div className="rounded-2xl border border-gray-200 dark:border-gray-700 p-8 text-center sm:text-left">
               <h2 className="text-lg font-semibold leading-8 text-gray-900 dark:text-white mb-4">
                 最新文章
@@ -81,6 +81,17 @@ export default function Home() {
                 className="text-sm leading-6 text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400"
               >
                 浏览所有分类 →
+              </Link>
+            </div>
+            <div className="rounded-2xl border border-gray-200 dark:border-gray-700 p-8 text-center sm:text-left lg:col-span-1">
+              <h2 className="text-lg font-semibold leading-8 text-gray-900 dark:text-white mb-4">
+                标签云
+              </h2>
+              <Link
+                href="/tags"
+                className="text-sm leading-6 text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400"
+              >
+                浏览所有标签 →
               </Link>
             </div>
           </div>

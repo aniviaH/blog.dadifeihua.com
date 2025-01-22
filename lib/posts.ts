@@ -88,10 +88,8 @@ export function getAllCategories(): Category[] {
   posts.forEach(post => {
     if (Array.isArray(post.categories)) {
       post.categories.forEach(categoryName => {
+        // 使用原始分类名作为 slug，这样可以保持中文
         const slug = categoryName
-          .toLowerCase()
-          .replace(/\s+/g, '-')
-          .replace(/[^a-z0-9-]/g, '')
 
         const existing = categoriesMap.get(slug)
         if (existing) {
@@ -119,15 +117,7 @@ export function getCategoryBySlug(slug: string): Category | null {
 // 获取指定分类下的所有文章
 export function getPostsByCategory(categorySlug: string): Post[] {
   const posts = getAllPosts()
-  return posts.filter(post =>
-    post.categories.some(
-      category =>
-        category
-          .toLowerCase()
-          .replace(/\s+/g, '-')
-          .replace(/[^a-z0-9-]/g, '') === categorySlug
-    )
-  )
+  return posts.filter(post => post.categories.some(category => category === categorySlug))
 }
 
 export function getPostBySlug(slug: string): Post | null {

@@ -4,6 +4,8 @@ import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import { createMetadata } from '@/lib/metadata'
 import OptimizedImage from '@/components/OptimizedImage'
+import TableOfContents from '@/components/TableOfContents'
+import ReadingProgress from '@/components/ReadingProgress'
 import type { Metadata } from 'next'
 
 interface PostPageProps {
@@ -22,33 +24,8 @@ export async function generateMetadata({ params }: PostPageProps): Promise<Metad
     path: `/posts/${params.slug}`,
     type: 'article',
     publishedTime: post.date,
-    image: post.coverImage, // 如果文章有封面图
+    image: post.coverImage,
   })
-}
-
-function TableOfContents({ toc }) {
-  return (
-    <nav className="space-y-2">
-      {toc.map((item) => (
-        <a
-          key={item.id}
-          href={`#${item.id}`}
-          className={`
-            block text-sm transition-colors duration-200 
-            ${item.level === 1 ? 'font-semibold' : 'font-normal'}
-            ${item.level === 2 ? 'text-gray-800 dark:text-gray-200' : 'text-gray-600 dark:text-gray-400'}
-            hover:text-blue-600 dark:hover:text-blue-400
-          `}
-          style={{ 
-            paddingLeft: `${(item.level - 1) * 1}rem`,
-            opacity: `${Math.max(0.9 - (item.level - 1) * 0.1, 0.6)}`,
-          }}
-        >
-          {item.title}
-        </a>
-      ))}
-    </nav>
-  )
 }
 
 export default function PostPage({ params }: PostPageProps) {
@@ -69,70 +46,94 @@ export default function PostPage({ params }: PostPageProps) {
   }
 
   return (
-    <div className="container mx-auto px-4">
-      <div className="lg:flex lg:gap-8">
-        {/* 侧边栏 */}
-        <aside className="lg:w-64 space-y-8">
-          {post.toc && post.toc.length > 0 && (
-            <div className="sticky top-24 space-y-4 rounded-lg border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900/50 p-4 shadow-sm">
-              <h2 className="font-semibold text-gray-900 dark:text-white border-b border-gray-100 dark:border-gray-800 pb-2">
-                目录
-              </h2>
-              <TableOfContents toc={post.toc} />
-            </div>
-          )}
-        </aside>
-
-        {/* 主要内容 */}
-        <article className="prose dark:prose-invert mx-auto max-w-4xl">
-          <header className="mb-8 not-prose">
-            <time className="text-sm text-gray-500 dark:text-gray-400">
-              {new Date(post.date).toLocaleDateString('zh-CN', {
-                year: 'numeric',
-                month: 'long',
-                day: 'numeric',
-              })}
-            </time>
-            <h1 className="mt-2 text-3xl font-bold tracking-tight text-gray-900 dark:text-white sm:text-4xl">
-              {post.title}
-            </h1>
-            {post.coverImage && (
-              <div className="mt-8">
-                <OptimizedImage
-                  src={post.coverImage}
-                  alt={post.title}
-                  width={1200}
-                  height={630}
-                  priority
-                  className="rounded-xl"
-                />
+    <>
+      <ReadingProgress />
+      <div className="container mx-auto px-4">
+        <div className="lg:flex lg:gap-8">
+          {/* 侧边栏 */}
+          <aside className="hidden lg:block lg:w-64 relative">
+            {post.toc && post.toc.length > 0 && (
+              <div className="sticky top-24 space-y-4 rounded-lg border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900/50 p-4 shadow-sm">
+                <h2 className="font-semibold text-gray-900 dark:text-white border-b border-gray-100 dark:border-gray-800 pb-2">
+                  目录
+                </h2>
+                <TableOfContents toc={post.toc} />
               </div>
             )}
-            {/* 分类和标签 */}
-            <div className="mt-4 flex flex-wrap gap-2">
-              {post.categories.map((category) => (
+          </aside>
+
+          {/* 主要内容 */}
+          <article className="prose dark:prose-invert mx-auto max-w-4xl">
+            <header className="mb-8 not-prose">
+              <div className="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400">
+                <time>
+                  {new Date(post.date).toLocaleDateString('zh-CN', {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric',
+                  })}
+                </time>
+                {post.readingTime && (
+                  <>
+                    <span>·</span>
+                    <span>{post.readingTime} 分钟阅读</span>
+                  </>
+                )}
+              </div>
+              <h1 className="mt-2 text-3xl font-bold tracking-tight text-gray-900 dark:text-white sm:text-4xl">
+                {post.title}
+              </h1>
+              {post.coverImage && (
+                <div className="mt-8">
+                  <OptimizedImage
+                    src={post.coverImage}
+                    alt={post.title}
+                    width={1200}
+                    height={630}
+                    priority
+                    className="rounded-xl"
+                  />
+                </div>
+              )}
+              {(post.categories?.length > 0 || post.tags?.length > 0) && (
+                <div className="mt-4 flex flex-wrap gap-2">
+                  {post.categories?.map((category) => (
+                    <Link
+                      key={category}
+                      href={`/categories/${category}`}
+                      className="inline-flex items-center rounded-full bg-blue-50 px-3 py-1 text-sm font-medium text-blue-700 dark:bg-blue-900/30 dark:text-blue-300"
+                    >
+                      {category}
+                    </Link>
+                  ))}
+                  {post.tags?.map((tag) => (
+                    <Link
+                      key={tag}
+                      href={`/tags/${tag}`}
+                      className="inline-flex items-center rounded-full bg-gray-50 px-3 py-1 text-sm font-medium text-gray-600 dark:bg-gray-800 dark:text-gray-300"
+                    >
+                      #{tag}
+                    </Link>
+                  ))}
+                </div>
+              )}
+            </header>
+
+            <MDXRemote source={post.content} components={components} />
+            
+            <footer className="mt-16 pt-8 border-t border-gray-200 dark:border-gray-800">
+              <div className="flex justify-between items-center">
                 <Link
-                  key={category}
-                  href={`/categories/${category}`}
-                  className="inline-flex items-center rounded-full bg-blue-100 px-3 py-1 text-sm font-medium text-blue-800 dark:bg-blue-900 dark:text-blue-100"
+                  href="/posts"
+                  className="text-sm font-medium text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
                 >
-                  {category}
+                  ← 返回文章列表
                 </Link>
-              ))}
-              {post.tags.map((tag) => (
-                <Link
-                  key={tag}
-                  href={`/tags/${tag}`}
-                  className="inline-flex items-center rounded-full bg-gray-100 px-3 py-1 text-sm font-medium text-gray-800 dark:bg-gray-800 dark:text-gray-100"
-                >
-                  #{tag}
-                </Link>
-              ))}
-            </div>
-          </header>
-          <MDXRemote source={post.content} components={components} />
-        </article>
+              </div>
+            </footer>
+          </article>
+        </div>
       </div>
-    </div>
+    </>
   )
 }

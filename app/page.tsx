@@ -45,22 +45,26 @@ export default function Home() {
           </div>
 
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            <div className="rounded-2xl border border-gray-200 dark:border-gray-700 p-8 text-center sm:text-left">
+            {/* 最新文章卡片 */}
+            <div className="rounded-2xl border border-gray-200 dark:border-gray-700 p-8 text-center sm:text-left flex flex-col">
               <h2 className="text-lg font-semibold leading-8 text-gray-900 dark:text-white mb-4">
                 最新文章
               </h2>
+              <div className="flex-1">{/* 这里可以添加最新文章列表 */}</div>
               <Link
                 href="/posts"
-                className="text-sm leading-6 text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400"
+                className="text-sm leading-6 text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 mt-4 inline-block"
               >
                 查看全部文章 →
               </Link>
             </div>
-            <div className="rounded-2xl border border-gray-200 dark:border-gray-700 p-8 text-center sm:text-left">
+
+            {/* 文章分类卡片 */}
+            <div className="rounded-2xl border border-gray-200 dark:border-gray-700 p-8 text-center sm:text-left flex flex-col">
               <h2 className="text-lg font-semibold leading-8 text-gray-900 dark:text-white mb-4">
                 文章分类
               </h2>
-              <div className="mb-4 space-y-2">
+              <div className="flex-1 space-y-2">
                 {categories.map(category => (
                   <Link
                     key={category.slug}
@@ -78,18 +82,21 @@ export default function Home() {
               </div>
               <Link
                 href="/categories"
-                className="text-sm leading-6 text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400"
+                className="text-sm leading-6 text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 mt-4 inline-block"
               >
                 浏览所有分类 →
               </Link>
             </div>
-            <div className="rounded-2xl border border-gray-200 dark:border-gray-700 p-8 text-center sm:text-left lg:col-span-1">
+
+            {/* 标签云卡片 */}
+            <div className="rounded-2xl border border-gray-200 dark:border-gray-700 p-8 text-center sm:text-left flex flex-col">
               <h2 className="text-lg font-semibold leading-8 text-gray-900 dark:text-white mb-4">
                 标签云
               </h2>
+              <div className="flex-1">{/* 这里可以添加标签云内容 */}</div>
               <Link
                 href="/tags"
-                className="text-sm leading-6 text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400"
+                className="text-sm leading-6 text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 mt-4 inline-block"
               >
                 浏览所有标签 →
               </Link>

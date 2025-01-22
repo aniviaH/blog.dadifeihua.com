@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useCallback, useRef } from 'react'
 
 interface TocItem {
   id: string
@@ -14,72 +14,102 @@ interface TableOfContentsProps {
 
 export default function TableOfContents({ toc }: TableOfContentsProps) {
   const [activeId, setActiveId] = useState<string>('')
+  const headingRefs = useRef<Map<string, HTMLElement>>(new Map())
 
+  // 初始化时获取所有标题元素的引用
   useEffect(() => {
-    if (!toc || toc.length === 0) return
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          const id = entry.target.getAttribute('id')
-          if (entry.isIntersecting && id) {
-            setActiveId(id)
-          }
-        })
-      },
-      {
-        rootMargin: '-64px 0% -80% 0%',
-        threshold: [0, 1],
-      }
-    )
-
-    // 观察所有标题元素
+    const refs = new Map<string, HTMLElement>()
     toc.forEach(({ id }) => {
       const element = document.getElementById(id)
       if (element) {
-        observer.observe(element)
+        refs.set(id, element)
       }
     })
-
-    // 初始化活动标题
-    const initActiveHeading = () => {
-      for (const { id } of toc) {
-        const element = document.getElementById(id)
-        if (element) {
-          const rect = element.getBoundingClientRect()
-          if (rect.top >= 0 && rect.top <= window.innerHeight * 0.4) {
-            setActiveId(id)
-            break
-          }
-        }
-      }
-    }
-    initActiveHeading()
-
-    return () => observer.disconnect()
+    headingRefs.current = refs
   }, [toc])
 
-  const scrollToHeading = (id: string) => {
-    const element = document.getElementById(id)
-    if (element) {
-      const offset = 80 // 头部导航栏的高度
-      const elementPosition = element.getBoundingClientRect().top
-      const offsetPosition = elementPosition + window.pageYOffset - offset
+  // 处理滚动
+  const handleScroll = useCallback(() => {
+    if (headingRefs.current.size === 0) return
 
-      window.scrollTo({
-        top: offsetPosition,
-        behavior: 'smooth'
-      })
+    const headings = Array.from(headingRefs.current.entries())
+    const headerOffset = 100
+
+    // 检查是否滚动到底部
+    const isAtBottom = 
+      window.innerHeight + window.scrollY >= 
+      document.documentElement.scrollHeight - 100
+
+    if (isAtBottom) {
+      // 如果在底部，激活最后一个标题
+      const lastHeading = headings[headings.length - 1]
+      setActiveId(lastHeading[0])
+      return
     }
-  }
 
-  if (!toc || toc.length === 0) {
-    return null
-  }
+    // 找到当前可见的标题
+    for (const [id, element] of headings) {
+      const { top } = element.getBoundingClientRect()
+      if (top >= 0 && top <= headerOffset) {
+        setActiveId(id)
+        return
+      }
+    }
+
+    // 如果没有找到可见的标题，使用最后一个已经过去的标题
+    for (let i = headings.length - 1; i >= 0; i--) {
+      const [id, element] = headings[i]
+      const { top } = element.getBoundingClientRect()
+      if (top <= headerOffset) {
+        setActiveId(id)
+        return
+      }
+    }
+  }, [])
+
+  // 处理目录项点击
+  const scrollToHeading = useCallback((id: string) => {
+    const element = headingRefs.current.get(id)
+    if (!element) return
+
+    const headerOffset = 80
+    const elementPosition = element.getBoundingClientRect().top
+    const offsetPosition = elementPosition + window.pageYOffset - headerOffset
+
+    window.scrollTo({
+      top: offsetPosition,
+      behavior: 'smooth'
+    })
+  }, [])
+
+  // 添加滚动监听
+  useEffect(() => {
+    if (toc.length === 0) return
+
+    let ticking = false
+    const onScroll = () => {
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          handleScroll()
+          ticking = false
+        })
+        ticking = true
+      }
+    }
+
+    window.addEventListener('scroll', onScroll, { passive: true })
+    handleScroll() // 初始化时检查一次
+    
+    return () => {
+      window.removeEventListener('scroll', onScroll)
+    }
+  }, [toc, handleScroll])
+
+  if (!toc || toc.length === 0) return null
 
   return (
     <nav className="text-sm">
-      <ul className="space-y-3">
+      <ul className="space-y-2">
         {toc.map((item) => (
           <li
             key={item.id}
@@ -90,7 +120,7 @@ export default function TableOfContents({ toc }: TableOfContentsProps) {
             <button
               onClick={() => scrollToHeading(item.id)}
               className={`
-                group flex items-center w-full text-left
+                group flex items-center w-full text-left py-1
                 ${
                   activeId === item.id
                     ? 'text-blue-600 dark:text-blue-400 font-medium'
@@ -99,16 +129,15 @@ export default function TableOfContents({ toc }: TableOfContentsProps) {
               `}
             >
               <span className={`
-                relative block h-1.5 w-1.5 shrink-0 rounded-full
+                relative block h-1.5 w-1.5 shrink-0 rounded-full mr-2
+                transition-colors duration-200
                 ${
                   activeId === item.id
                     ? 'bg-blue-600 dark:bg-blue-400'
-                    : 'bg-gray-300 dark:bg-gray-600'
+                    : 'bg-gray-300 dark:bg-gray-600 group-hover:bg-blue-600 dark:group-hover:bg-blue-400'
                 }
-                mr-2 group-hover:bg-blue-600 dark:group-hover:bg-blue-400
-                transition-colors duration-200
               `} />
-              <span className="hover:translate-x-1 transition-transform duration-200">
+              <span className="transition-transform duration-200 group-hover:translate-x-1">
                 {item.title}
               </span>
             </button>

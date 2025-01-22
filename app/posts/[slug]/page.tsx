@@ -7,6 +7,10 @@ import OptimizedImage from '@/components/OptimizedImage'
 import TableOfContents from '@/components/TableOfContents'
 import ReadingProgress from '@/components/ReadingProgress'
 import type { Metadata } from 'next'
+import rehypePrism from 'rehype-prism'
+import remarkGfm from 'remark-gfm'
+import rehypeSlug from 'rehype-slug'
+import rehypeAutolinkHeadings from 'rehype-autolink-headings'
 
 interface PostPageProps {
   params: Promise<{
@@ -14,9 +18,7 @@ interface PostPageProps {
   }>
 }
 
-export async function generateMetadata(
-  { params }: PostPageProps
-): Promise<Metadata> {
+export async function generateMetadata({ params }: PostPageProps): Promise<Metadata> {
   const { slug } = await params
   const post = getPostBySlug(slug)
   
@@ -42,11 +44,7 @@ export default async function PostPage({ params }: PostPageProps) {
     notFound()
   }
 
-  console.log('Post data:', { 
-    title: post.title,
-    coverImage: post.coverImage,
-    date: post.date 
-  });
+  console.log('Post TOC:', post.toc)
 
   // 自定义 MDX 组件
   const components = {
@@ -103,8 +101,7 @@ export default async function PostPage({ params }: PostPageProps) {
                     alt={post.title}
                     width={1200}
                     height={630}
-                    priority
-                    className="rounded-xl"
+                    className="rounded-lg shadow-md"
                   />
                 </div>
               )}
@@ -132,7 +129,26 @@ export default async function PostPage({ params }: PostPageProps) {
               )}
             </header>
 
-            <MDXRemote source={post.content} components={components} />
+            <MDXRemote
+              source={post.content}
+              options={{
+                mdxOptions: {
+                  remarkPlugins: [remarkGfm],
+                  rehypePlugins: [
+                    rehypeSlug,
+                    rehypePrism
+                  ]
+                },
+              }}
+              components={{
+                img: (props: any) => (
+                  <OptimizedImage
+                    {...props}
+                    className="rounded-lg my-8"
+                  />
+                ),
+              }}
+            />
             
             <footer className="mt-16 pt-8 border-t border-gray-200 dark:border-gray-800">
               <div className="flex justify-between items-center">

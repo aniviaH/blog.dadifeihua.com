@@ -52,13 +52,26 @@ export function getPostBySlug(slug: string): Post | null {
     const { data, content } = matter(fileContents)
 
     // 生成目录
-    const headingLines = content.split('\n').filter(line => line.startsWith('#'))
-    const toc = headingLines.map(line => {
-      const level = line.match(/^#+/)[0].length
-      const title = line.replace(/^#+\s+/, '')
-      const id = title.toLowerCase().replace(/\s+/g, '-')
-      return { id, title, level }
-    })
+    const lines = content.split('\n')
+    const toc: TableOfContents[] = []
+
+    for (let i = 0; i < lines.length; i++) {
+      const line = lines[i].trim()
+      const match = line.match(/^(#{1,6})\s+(.+)$/)
+      
+      if (match) {
+        const level = match[1].length
+        const title = match[2].trim()
+        const id = title
+          .toLowerCase()
+          .replace(/[\s?]/g, '-')
+          .replace(/[^a-z0-9-\u4e00-\u9fa5]/g, '')
+          .replace(/-+/g, '-')
+          .replace(/^-|-$/g, '')
+
+        toc.push({ id, title, level })
+      }
+    }
 
     return {
       slug,
@@ -71,7 +84,8 @@ export function getPostBySlug(slug: string): Post | null {
       coverImage: data.coverImage,
       toc,
     }
-  } catch {
+  } catch (error) {
+    console.error('Error in getPostBySlug:', error)
     return null
   }
 }

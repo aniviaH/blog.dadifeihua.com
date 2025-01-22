@@ -35,6 +35,12 @@ export default function PostPage({ params }: PostPageProps) {
     notFound()
   }
 
+  console.log('Post data:', { 
+    title: post.title,
+    coverImage: post.coverImage,
+    date: post.date 
+  });
+
   // 自定义 MDX 组件
   const components = {
     img: (props: any) => (

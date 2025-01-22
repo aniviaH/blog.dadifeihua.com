@@ -12,6 +12,7 @@ export type Post = {
   content: string
   categories: string[]
   tags: string[]
+  coverImage?: string
   toc?: TableOfContents[]
 }
 
@@ -37,6 +38,7 @@ export function getAllPosts(): Post[] {
       content,
       categories: data.categories || [],
       tags: data.tags || [],
+      coverImage: data.coverImage,
     }
   })
 
@@ -66,6 +68,7 @@ export function getPostBySlug(slug: string): Post | null {
       content,
       categories: data.categories || [],
       tags: data.tags || [],
+      coverImage: data.coverImage,
       toc,
     }
   } catch {

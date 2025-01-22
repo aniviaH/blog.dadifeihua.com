@@ -9,27 +9,34 @@ import ReadingProgress from '@/components/ReadingProgress'
 import type { Metadata } from 'next'
 
 interface PostPageProps {
-  params: {
+  params: Promise<{
     slug: string
-  }
+  }>
 }
 
-export async function generateMetadata({ params }: PostPageProps): Promise<Metadata> {
-  const post = getPostBySlug(params.slug)
-  if (!post) return {}
+export async function generateMetadata(
+  { params }: PostPageProps
+): Promise<Metadata> {
+  const { slug } = await params
+  const post = getPostBySlug(slug)
+  
+  if (!post) {
+    return {}
+  }
 
   return createMetadata({
     title: post.title,
     description: post.excerpt,
-    path: `/posts/${params.slug}`,
+    path: `/posts/${slug}`,
     type: 'article',
     publishedTime: post.date,
     image: post.coverImage,
   })
 }
 
-export default function PostPage({ params }: PostPageProps) {
-  const post = getPostBySlug(params.slug)
+export default async function PostPage({ params }: PostPageProps) {
+  const { slug } = await params
+  const post = getPostBySlug(slug)
 
   if (!post) {
     notFound()

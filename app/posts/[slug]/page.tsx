@@ -11,13 +11,21 @@ interface PostPageProps {
 
 function TableOfContents({ toc }) {
   return (
-    <nav className="space-y-1">
+    <nav className="space-y-2">
       {toc.map((item) => (
         <a
           key={item.id}
           href={`#${item.id}`}
-          className="block text-sm hover:text-blue-600 dark:hover:text-blue-400"
-          style={{ paddingLeft: `${(item.level - 1) * 1}rem` }}
+          className={`
+            block text-sm transition-colors duration-200 
+            ${item.level === 1 ? 'font-semibold' : 'font-normal'}
+            ${item.level === 2 ? 'text-gray-800 dark:text-gray-200' : 'text-gray-600 dark:text-gray-400'}
+            hover:text-blue-600 dark:hover:text-blue-400
+          `}
+          style={{ 
+            paddingLeft: `${(item.level - 1) * 1}rem`,
+            opacity: `${Math.max(0.9 - (item.level - 1) * 0.1, 0.6)}`,
+          }}
         >
           {item.title}
         </a>
@@ -39,8 +47,10 @@ export default function PostPage({ params }: PostPageProps) {
         {/* 侧边栏 */}
         <aside className="lg:w-64 space-y-8">
           {post.toc && post.toc.length > 0 && (
-            <div className="sticky top-24 space-y-4 rounded-lg border p-4 dark:border-gray-800">
-              <h2 className="font-semibold text-gray-900 dark:text-white">目录</h2>
+            <div className="sticky top-24 space-y-4 rounded-lg border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900/50 p-4 shadow-sm">
+              <h2 className="font-semibold text-gray-900 dark:text-white border-b border-gray-100 dark:border-gray-800 pb-2">
+                目录
+              </h2>
               <TableOfContents toc={post.toc} />
             </div>
           )}

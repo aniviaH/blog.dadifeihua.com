@@ -1,112 +1,72 @@
-import Image from "next/image";
+import OptimizedImage from '@/components/OptimizedImage'
+import Link from 'next/link'
 
 export default function Home() {
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        {/* <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        /> */}
-        <div className="flex items-center gap-4 my-8">
-          <img
-            src="/avatar.jpeg"
-            alt="博主头像"
-            className="w-24 h-24 rounded-full border-2 border-gray-200 dark:border-gray-700"
-          />
-          <div>
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white">刘欢</h3>
-            <p className="text-gray-600 dark:text-gray-400">热爱技术，热爱生活，记录成长的点点滴滴。</p>
+    <div className="min-h-screen bg-gradient-to-b from-white to-gray-50 dark:from-gray-900 dark:to-gray-800">
+      <main className="container mx-auto px-4 py-16 sm:py-24">
+        <div className="max-w-2xl mx-auto text-center sm:text-left">
+          <div className="flex flex-col sm:flex-row items-center gap-8 mb-12">
+            <div className="w-40 h-40 shrink-0">
+              <OptimizedImage
+                src="/avatar.jpeg"
+                alt="博主头像"
+                width={160}
+                height={160}
+                priority
+                className="rounded-full ring-4 ring-white dark:ring-gray-800 shadow-lg"
+              />
+            </div>
+            <div className="flex-1">
+              <h1 className="text-4xl font-bold tracking-tight text-gray-900 dark:text-white sm:text-5xl">
+                刘欢的博客
+              </h1>
+              <p className="mt-4 text-lg leading-8 text-gray-600 dark:text-gray-300">
+                热爱技术，热爱生活，记录成长的点点滴滴。
+              </p>
+              <div className="mt-6 flex flex-wrap justify-center sm:justify-start gap-4">
+                <Link
+                  href="/posts"
+                  className="rounded-full px-6 py-2.5 text-sm font-semibold text-white shadow-sm bg-blue-600 hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:bg-blue-500 dark:hover:bg-blue-400"
+                >
+                  阅读博客
+                </Link>
+                <Link
+                  href="/about"
+                  className="rounded-full px-6 py-2.5 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 dark:text-white dark:ring-gray-700 dark:hover:bg-gray-800"
+                >
+                  关于我
+                </Link>
+              </div>
+            </div>
+          </div>
+
+          <div className="grid gap-8 sm:grid-cols-2">
+            <div className="rounded-2xl border border-gray-200 dark:border-gray-700 p-8 text-center sm:text-left">
+              <h2 className="text-lg font-semibold leading-8 text-gray-900 dark:text-white mb-4">
+                最新文章
+              </h2>
+              <Link
+                href="/posts"
+                className="text-sm leading-6 text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400"
+              >
+                查看全部文章 →
+              </Link>
+            </div>
+            <div className="rounded-2xl border border-gray-200 dark:border-gray-700 p-8 text-center sm:text-left">
+              <h2 className="text-lg font-semibold leading-8 text-gray-900 dark:text-white mb-4">
+                标签云
+              </h2>
+              <Link
+                href="/tags"
+                className="text-sm leading-6 text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400"
+              >
+                浏览所有标签 →
+              </Link>
+            </div>
           </div>
         </div>
-        {/* <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
-              app/page.tsx
-            </code>
-            .
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
-
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
-        </div> */}
       </main>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
     </div>
-  );
+  )
 }

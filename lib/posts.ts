@@ -4,7 +4,13 @@ import matter from 'gray-matter'
 
 const postsDirectory = path.join(process.cwd(), 'content/posts')
 
-export type Post = {
+export interface TableOfContents {
+  id: string
+  title: string
+  level: number
+}
+
+export interface Post {
   slug: string
   title: string
   date: string
@@ -16,15 +22,64 @@ export type Post = {
   toc?: TableOfContents[]
 }
 
-export type TableOfContents = {
-  id: string
-  title: string
-  level: number
+export interface Category {
+  name: string
+  slug: string
+  description?: string
+  count: number
+}
+
+// 获取所有分类
+export function getAllCategories(): Category[] {
+  const posts = getAllPosts()
+  const categoriesMap = new Map<string, Category>()
+
+  posts.forEach(post => {
+    post.categories.forEach(categoryName => {
+      const slug = categoryName
+        .toLowerCase()
+        .replace(/\s+/g, '-')
+        .replace(/[^a-z0-9-]/g, '')
+
+      const existing = categoriesMap.get(slug)
+      if (existing) {
+        existing.count++
+      } else {
+        categoriesMap.set(slug, {
+          name: categoryName,
+          slug,
+          count: 1,
+        })
+      }
+    })
+  })
+
+  return Array.from(categoriesMap.values()).sort((a, b) => b.count - a.count)
+}
+
+// 根据 slug 获取分类信息
+export function getCategoryBySlug(slug: string): Category | null {
+  const categories = getAllCategories()
+  return categories.find(category => category.slug === slug) || null
+}
+
+// 获取指定分类下的所有文章
+export function getPostsByCategory(categorySlug: string): Post[] {
+  const posts = getAllPosts()
+  return posts.filter(post =>
+    post.categories.some(
+      category =>
+        category
+          .toLowerCase()
+          .replace(/\s+/g, '-')
+          .replace(/[^a-z0-9-]/g, '') === categorySlug
+    )
+  )
 }
 
 export function getAllPosts(): Post[] {
   const fileNames = fs.readdirSync(postsDirectory)
-  const allPostsData = fileNames.map((fileName) => {
+  const allPostsData = fileNames.map(fileName => {
     const slug = fileName.replace(/\.mdx$/, '')
     const fullPath = path.join(postsDirectory, fileName)
     const fileContents = fs.readFileSync(fullPath, 'utf8')
@@ -58,7 +113,7 @@ export function getPostBySlug(slug: string): Post | null {
     for (let i = 0; i < lines.length; i++) {
       const line = lines[i].trim()
       const match = line.match(/^(#{1,6})\s+(.+)$/)
-      
+
       if (match) {
         const level = match[1].length
         const title = match[2].trim()
@@ -90,13 +145,6 @@ export function getPostBySlug(slug: string): Post | null {
   }
 }
 
-export function getAllCategories(): string[] {
-  const posts = getAllPosts()
-  const categories = new Set<string>()
-  posts.forEach(post => post.categories.forEach(category => categories.add(category)))
-  return Array.from(categories)
-}
-
 export function getAllTags(): { [key: string]: Post[] } {
   const posts = getAllPosts()
   const tags: { [key: string]: Post[] } = {}
@@ -115,11 +163,6 @@ export function getAllTags(): { [key: string]: Post[] } {
   return tags
 }
 
-export function getPostsByCategory(category: string): Post[] {
-  const posts = getAllPosts()
-  return posts.filter(post => post.categories.includes(category))
-}
-
 export function getPostsByTag(tag: string): Post[] {
   const posts = getAllPosts()
   return posts.filter(post => Array.isArray(post.tags) && post.tags.includes(tag))
@@ -128,12 +171,13 @@ export function getPostsByTag(tag: string): Post[] {
 export function searchPosts(query: string): Post[] {
   const posts = getAllPosts()
   const searchTerm = query.toLowerCase()
-  return posts.filter(post => 
-    post.title.toLowerCase().includes(searchTerm) ||
-    post.excerpt.toLowerCase().includes(searchTerm) ||
-    post.content.toLowerCase().includes(searchTerm) ||
-    post.tags.some(tag => tag.toLowerCase().includes(searchTerm)) ||
-    post.categories.some(category => category.toLowerCase().includes(searchTerm))
+  return posts.filter(
+    post =>
+      post.title.toLowerCase().includes(searchTerm) ||
+      post.excerpt.toLowerCase().includes(searchTerm) ||
+      post.content.toLowerCase().includes(searchTerm) ||
+      post.tags.some(tag => tag.toLowerCase().includes(searchTerm)) ||
+      post.categories.some(category => category.toLowerCase().includes(searchTerm))
   )
 }
 
@@ -154,7 +198,7 @@ export function getPostBySlugNew(slug: string) {
     content,
     excerpt: data.excerpt || '',
     coverImage: data.coverImage,
-    tags: Array.isArray(data.tags) ? data.tags : []
+    tags: Array.isArray(data.tags) ? data.tags : [],
   }
 
   return post

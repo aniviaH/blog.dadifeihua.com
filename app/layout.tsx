@@ -4,16 +4,17 @@ import './globals.css'
 import SearchBar from '@/components/SearchBar'
 import ThemeToggle from '@/components/ThemeToggle'
 import ThemeProvider from '@/components/ThemeProvider'
+import Link from 'next/link'
 
 const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
+  variable: '--font-geist-sans',
+  subsets: ['latin'],
+})
 
 const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
+  variable: '--font-geist-mono',
+  subsets: ['latin'],
+})
 
 export const metadata: Metadata = {
   title: '个人博客 | 灵感与想法',
@@ -23,7 +24,7 @@ export const metadata: Metadata = {
 export default function RootLayout({
   children,
 }: Readonly<{
-  children: React.ReactNode;
+  children: React.ReactNode
 }>) {
   return (
     <html lang="zh" suppressHydrationWarning>
@@ -50,15 +51,27 @@ export default function RootLayout({
             <div className="container mx-auto px-4 sm:px-6 lg:px-8">
               <div className="flex h-16 items-center justify-between">
                 <nav className="flex items-center space-x-8">
-                  <a href="/" className="text-xl font-bold text-gray-900 dark:text-white">
+                  <Link href="/" className="text-xl font-bold text-gray-900 dark:text-white">
                     博客主页
-                  </a>
-                  <a href="/posts" className="text-gray-600 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white">
+                  </Link>
+                  <Link
+                    href="/posts"
+                    className="text-gray-600 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white"
+                  >
                     文章
-                  </a>
-                  <a href="/about" className="text-gray-600 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white">
+                  </Link>
+                  <Link
+                    href="/categories"
+                    className="text-gray-600 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white"
+                  >
+                    分类
+                  </Link>
+                  <Link
+                    href="/about"
+                    className="text-gray-600 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white"
+                  >
                     关于
-                  </a>
+                  </Link>
                 </nav>
                 <div className="hidden sm:block">
                   <div className="flex items-center gap-4">
@@ -69,9 +82,7 @@ export default function RootLayout({
               </div>
             </div>
           </header>
-          <main className="container mx-auto px-4 py-8 sm:px-6 lg:px-8">
-            {children}
-          </main>
+          <main className="container mx-auto px-4 py-8 sm:px-6 lg:px-8">{children}</main>
         </ThemeProvider>
         <footer className="border-t bg-white dark:bg-gray-900 dark:border-gray-800">
           <div className="container mx-auto px-4 py-6 sm:px-6 lg:px-8">

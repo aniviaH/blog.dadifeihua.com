@@ -5,6 +5,7 @@ import SearchBar from '@/components/SearchBar'
 import ThemeToggle from '@/components/ThemeToggle'
 import ThemeProvider from '@/components/ThemeProvider'
 import Link from 'next/link'
+import { FaGithub } from 'react-icons/fa'
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -71,6 +72,15 @@ export default function RootLayout({
                   <div className="flex items-center gap-4">
                     <SearchBar />
                     <ThemeToggle />
+                    <a
+                      href="https://github.com/aniviah"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white"
+                    >
+                      <FaGithub className="h-6 w-6" />
+                      <span className="sr-only">GitHub</span>
+                    </a>
                   </div>
                 </div>
               </div>

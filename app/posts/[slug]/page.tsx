@@ -66,8 +66,8 @@ export default async function PostPage({ params }: PostPageProps) {
           {/* 侧边栏 */}
           <aside className="hidden lg:block lg:w-64 relative">
             {post.toc && post.toc.length > 0 && (
-              <div className="sticky top-24 space-y-4 rounded-lg border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900/50 p-4 shadow-sm">
-                <h2 className="font-semibold text-gray-900 dark:text-white border-b border-gray-100 dark:border-gray-800 pb-2">
+              <div className="sticky top-24 overflow-y-auto max-h-[calc(100vh-8rem)] rounded-lg border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900/50 p-4 shadow-sm">
+                <h2 className="font-semibold text-gray-900 dark:text-white border-b border-gray-100 dark:border-gray-800 pb-2 mb-4">
                   目录
                 </h2>
                 <TableOfContents toc={post.toc} />

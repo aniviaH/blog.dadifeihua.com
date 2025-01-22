@@ -20,6 +20,7 @@ export interface Post {
   tags: string[]
   coverImage?: string
   toc?: TableOfContents[]
+  readingTime?: string
 }
 
 export interface Category {
@@ -29,29 +30,81 @@ export interface Category {
   count: number
 }
 
+// 获取所有文章
+export function getAllPosts(): Post[] {
+  const fileNames = fs.readdirSync(postsDirectory)
+  const allPosts = fileNames
+    .filter(fileName => fileName.endsWith('.mdx'))
+    .map(fileName => {
+      const slug = fileName.replace(/\.mdx$/, '')
+      const fullPath = path.join(postsDirectory, fileName)
+      const fileContents = fs.readFileSync(fullPath, 'utf8')
+      const { data, content } = matter(fileContents)
+
+      // 生成目录
+      const lines = content.split('\n')
+      const toc: TableOfContents[] = []
+
+      for (let i = 0; i < lines.length; i++) {
+        const line = lines[i].trim()
+        const match = line.match(/^(#{1,6})\s+(.+)$/)
+
+        if (match) {
+          const level = match[1].length
+          const title = match[2].trim()
+          const id = title
+            .toLowerCase()
+            .replace(/[\s?]/g, '-')
+            .replace(/[^a-z0-9-\u4e00-\u9fa5]/g, '')
+            .replace(/-+/g, '-')
+            .replace(/^-|-$/g, '')
+
+          toc.push({ id, title, level })
+        }
+      }
+
+      return {
+        slug,
+        title: data.title,
+        date: data.date,
+        content,
+        excerpt: data.excerpt || '',
+        categories: data.categories || [],
+        tags: Array.isArray(data.tags) ? data.tags : [],
+        coverImage: data.coverImage,
+        toc,
+        readingTime: data.readingTime,
+      }
+    })
+
+  return allPosts.sort((a, b) => (a.date > b.date ? -1 : 1))
+}
+
 // 获取所有分类
 export function getAllCategories(): Category[] {
   const posts = getAllPosts()
   const categoriesMap = new Map<string, Category>()
 
   posts.forEach(post => {
-    post.categories.forEach(categoryName => {
-      const slug = categoryName
-        .toLowerCase()
-        .replace(/\s+/g, '-')
-        .replace(/[^a-z0-9-]/g, '')
+    if (Array.isArray(post.categories)) {
+      post.categories.forEach(categoryName => {
+        const slug = categoryName
+          .toLowerCase()
+          .replace(/\s+/g, '-')
+          .replace(/[^a-z0-9-]/g, '')
 
-      const existing = categoriesMap.get(slug)
-      if (existing) {
-        existing.count++
-      } else {
-        categoriesMap.set(slug, {
-          name: categoryName,
-          slug,
-          count: 1,
-        })
-      }
-    })
+        const existing = categoriesMap.get(slug)
+        if (existing) {
+          existing.count++
+        } else {
+          categoriesMap.set(slug, {
+            name: categoryName,
+            slug,
+            count: 1,
+          })
+        }
+      })
+    }
   })
 
   return Array.from(categoriesMap.values()).sort((a, b) => b.count - a.count)
@@ -75,29 +128,6 @@ export function getPostsByCategory(categorySlug: string): Post[] {
           .replace(/[^a-z0-9-]/g, '') === categorySlug
     )
   )
-}
-
-export function getAllPosts(): Post[] {
-  const fileNames = fs.readdirSync(postsDirectory)
-  const allPostsData = fileNames.map(fileName => {
-    const slug = fileName.replace(/\.mdx$/, '')
-    const fullPath = path.join(postsDirectory, fileName)
-    const fileContents = fs.readFileSync(fullPath, 'utf8')
-    const { data, content } = matter(fileContents)
-
-    return {
-      slug,
-      title: data.title,
-      date: data.date,
-      excerpt: data.excerpt || '',
-      content,
-      categories: data.categories || [],
-      tags: Array.isArray(data.tags) ? data.tags : [],
-      coverImage: data.coverImage,
-    }
-  })
-
-  return allPostsData.sort((a, b) => (a.date < b.date ? 1 : -1))
 }
 
 export function getPostBySlug(slug: string): Post | null {

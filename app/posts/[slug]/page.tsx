@@ -6,6 +6,7 @@ import { createMetadata } from '@/lib/metadata'
 import OptimizedImage from '@/components/OptimizedImage'
 import TableOfContents from '@/components/TableOfContents'
 import ReadingProgress from '@/components/ReadingProgress'
+import BackToTop from '@/components/BackToTop'
 import type { Metadata } from 'next'
 import rehypePrism from 'rehype-prism'
 import remarkGfm from 'remark-gfm'
@@ -59,6 +60,7 @@ export default async function PostPage({ params }: PostPageProps) {
   return (
     <>
       <ReadingProgress />
+      <BackToTop />
       <div className="container mx-auto px-4">
         <div className="lg:flex lg:gap-8">
           {/* 侧边栏 */}
@@ -136,7 +138,8 @@ export default async function PostPage({ params }: PostPageProps) {
                   remarkPlugins: [remarkGfm],
                   rehypePlugins: [
                     rehypeSlug,
-                    rehypePrism
+                    rehypePrism,
+                    rehypeAutolinkHeadings
                   ]
                 },
               }}

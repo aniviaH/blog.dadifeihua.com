@@ -1,171 +1,121 @@
-import { getPostBySlug } from '@/lib/posts'
-import { MDXRemote } from 'next-mdx-remote/rsc'
+import { getPostBySlug, getAllPosts } from '@/lib/posts'
+import { format } from 'date-fns'
+import { zhCN } from 'date-fns/locale'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
-import { createMetadata } from '@/lib/metadata'
-import OptimizedImage from '@/components/OptimizedImage'
-import TableOfContents from '@/components/TableOfContents'
-import ReadingProgress from '@/components/ReadingProgress'
-import BackToTop from '@/components/BackToTop'
-import type { Metadata } from 'next'
+import PostCoverImage from '@/components/PostCoverImage'
+import { MDXRemote } from 'next-mdx-remote/rsc'
 import rehypePrism from 'rehype-prism'
 import remarkGfm from 'remark-gfm'
-import rehypeSlug from 'rehype-slug'
-import rehypeAutolinkHeadings from 'rehype-autolink-headings'
+import type { Metadata } from 'next'
 
-interface PostPageProps {
-  params: Promise<{
-    slug: string
-  }>
+type Props = {
+  params: { slug: string }
 }
 
-export async function generateMetadata({ params }: PostPageProps): Promise<Metadata> {
-  const { slug } = await params
-  const post = getPostBySlug(slug)
-  
+type PostMeta = {
+  title: string
+  description?: string
+  date: string
+  coverImage?: string
+  content: string
+  categories?: string[]
+  tags?: string[]
+}
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const post = getPostBySlug(params.slug)
+
   if (!post) {
     return {}
   }
 
-  return createMetadata({
-    title: post.title,
-    description: post.excerpt,
-    path: `/posts/${slug}`,
-    type: 'article',
-    publishedTime: post.date,
-    image: post.coverImage,
-  })
+  const { title, description, date, coverImage } = post as PostMeta
+
+  return {
+    title,
+    description,
+    openGraph: {
+      title,
+      description,
+      type: 'article',
+      publishedTime: date,
+      images: coverImage ? [coverImage] : undefined,
+    },
+  }
 }
 
-export default async function PostPage({ params }: PostPageProps) {
-  const { slug } = await params
-  const post = getPostBySlug(slug)
+export async function generateStaticParams() {
+  const posts = getAllPosts()
+  return posts.map(post => ({
+    slug: post.slug,
+  }))
+}
+
+export default function PostPage({ params }: Props) {
+  const post = getPostBySlug(params.slug)
 
   if (!post) {
     notFound()
   }
 
-  console.log('Post TOC:', post.toc)
-
-  // 自定义 MDX 组件
-  const components = {
-    img: (props: any) => (
-      <OptimizedImage
-        {...props}
-        className="rounded-lg my-8"
-      />
-    ),
-  }
-
   return (
-    <>
-      <ReadingProgress />
-      <BackToTop />
-      <div className="container mx-auto px-4">
-        <div className="lg:flex lg:gap-8">
-          {/* 侧边栏 */}
-          <aside className="hidden lg:block lg:w-64 relative">
-            {post.toc && post.toc.length > 0 && (
-              <div className="sticky top-24 overflow-y-auto max-h-[calc(100vh-8rem)] rounded-lg border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900/50 p-4 shadow-sm">
-                <h2 className="font-semibold text-gray-900 dark:text-white border-b border-gray-100 dark:border-gray-800 pb-2 mb-4">
-                  目录
-                </h2>
-                <TableOfContents toc={post.toc} />
-              </div>
-            )}
-          </aside>
-
-          {/* 主要内容 */}
-          <article className="prose dark:prose-invert mx-auto max-w-4xl">
-            <header className="mb-8 not-prose">
-              <div className="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400">
-                <time>
-                  {new Date(post.date).toLocaleDateString('zh-CN', {
-                    year: 'numeric',
-                    month: 'long',
-                    day: 'numeric',
-                  })}
-                </time>
-                {post.readingTime && (
-                  <>
-                    <span>·</span>
-                    <span>{post.readingTime} 分钟阅读</span>
-                  </>
-                )}
-              </div>
-              <h1 className="mt-2 text-3xl font-bold tracking-tight text-gray-900 dark:text-white sm:text-4xl">
-                {post.title}
-              </h1>
-              {post.coverImage && (
-                <div className="mt-8">
-                  <OptimizedImage
-                    src={post.coverImage}
-                    alt={post.title}
-                    width={1200}
-                    height={630}
-                    className="rounded-lg shadow-md"
-                  />
-                </div>
-              )}
-              {(post.categories?.length > 0 || post.tags?.length > 0) && (
-                <div className="mt-4 flex flex-wrap gap-2">
-                  {post.categories?.map((category) => (
-                    <Link
-                      key={category}
-                      href={`/categories/${category}`}
-                      className="inline-flex items-center rounded-full bg-blue-50 px-3 py-1 text-sm font-medium text-blue-700 dark:bg-blue-900/30 dark:text-blue-300"
-                    >
-                      {category}
-                    </Link>
-                  ))}
-                  {post.tags?.map((tag) => (
-                    <Link
-                      key={tag}
-                      href={`/tags/${tag}`}
-                      className="inline-flex items-center rounded-full bg-gray-50 px-3 py-1 text-sm font-medium text-gray-600 dark:bg-gray-800 dark:text-gray-300"
-                    >
-                      #{tag}
-                    </Link>
-                  ))}
-                </div>
-              )}
-            </header>
-
-            <MDXRemote
-              source={post.content}
-              options={{
-                mdxOptions: {
-                  remarkPlugins: [remarkGfm],
-                  rehypePlugins: [
-                    rehypeSlug,
-                    rehypePrism,
-                    rehypeAutolinkHeadings
-                  ]
-                },
-              }}
-              components={{
-                img: (props: any) => (
-                  <OptimizedImage
-                    {...props}
-                    className="rounded-lg my-8"
-                  />
-                ),
-              }}
-            />
-            
-            <footer className="mt-16 pt-8 border-t border-gray-200 dark:border-gray-800">
-              <div className="flex justify-between items-center">
-                <Link
-                  href="/posts"
-                  className="text-sm font-medium text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
-                >
-                  ← 返回文章列表
-                </Link>
-              </div>
-            </footer>
-          </article>
+    <article className="mx-auto max-w-3xl px-4 py-12">
+      <div className="mb-8">
+        <h1 className="text-3xl font-bold tracking-tight text-gray-900 dark:text-white sm:text-4xl">
+          {post.title}
+        </h1>
+        <div className="mt-4 flex items-center gap-x-4 text-xs text-gray-500 dark:text-gray-400">
+          <time dateTime={post.date}>{format(new Date(post.date), 'PPP', { locale: zhCN })}</time>
+          <div className="flex items-center gap-x-4">
+            {post.categories?.map(category => (
+              <Link
+                key={category}
+                href={`/categories/${category}`}
+                className="hover:text-blue-600 dark:hover:text-blue-400"
+              >
+                {category}
+              </Link>
+            ))}
+          </div>
         </div>
       </div>
-    </>
+
+      {post.coverImage && (
+        <div className="relative aspect-[16/9] mb-8 overflow-hidden rounded-2xl bg-gray-100 dark:bg-gray-800">
+          <PostCoverImage
+            src={post.coverImage}
+            alt={post.title}
+            priority
+            className="object-cover"
+            fill
+          />
+        </div>
+      )}
+
+      <div className="prose prose-lg prose-blue mx-auto dark:prose-invert">
+        <MDXRemote
+          source={post.content}
+          options={{
+            mdxOptions: {
+              remarkPlugins: [remarkGfm],
+              rehypePlugins: [rehypePrism],
+            },
+          }}
+        />
+      </div>
+
+      <div className="mt-8 flex flex-wrap gap-2">
+        {post.tags?.map(tag => (
+          <Link
+            key={tag}
+            href={`/tags/${tag}`}
+            className="inline-flex items-center rounded-full px-3 py-1 text-sm bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-gray-100 hover:bg-blue-100 dark:hover:bg-blue-900 transition-colors"
+          >
+            {tag}
+          </Link>
+        ))}
+      </div>
+    </article>
   )
 }

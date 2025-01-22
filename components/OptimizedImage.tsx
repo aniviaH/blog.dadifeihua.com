@@ -8,8 +8,8 @@ interface OptimizedImageProps {
   alt: string;
   width?: number;
   height?: number;
-  className?: string;
   priority?: boolean;
+  className?: string;
 }
 
 export default function OptimizedImage({
@@ -17,13 +17,13 @@ export default function OptimizedImage({
   alt,
   width,
   height,
-  className = '',
   priority = false,
+  className = '',
 }: OptimizedImageProps) {
   const [isLoading, setIsLoading] = useState(true);
 
   return (
-    <div className={`relative overflow-hidden ${className}`}>
+    <div className={`overflow-hidden ${className}`}>
       <Image
         src={src}
         alt={alt}
@@ -32,17 +32,12 @@ export default function OptimizedImage({
         priority={priority}
         className={`
           duration-700 ease-in-out
-          ${isLoading ? 'scale-110 blur-lg' : 'scale-100 blur-0'}
+          ${isLoading ? 'scale-110 blur-2xl grayscale' : 'scale-100 blur-0 grayscale-0'}
         `}
-        onLoadingComplete={() => setIsLoading(false)}
-        quality={85}
-        sizes="(max-width: 640px) 100vw,
-               (max-width: 1024px) 50vw,
-               33vw"
+        onLoad={() => setIsLoading(false)}
+        quality={90}
+        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
       />
-      {isLoading && (
-        <div className="absolute inset-0 bg-gray-200 dark:bg-gray-800 animate-pulse" />
-      )}
     </div>
   );
 }

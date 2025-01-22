@@ -1,36 +1,57 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 个人博客
 
-## Getting Started
+基于 Next.js 14 和 Tailwind CSS 构建的个人博客网站。
 
-First, run the development server:
+## 功能特点
+
+- **文章管理**
+
+  - MDX 支持，可以在文章中使用 React 组件
+  - 文章分类和标签系统
+  - 按时间排序的文章列表
+
+- **界面设计**
+
+  - 响应式布局，支持移动端和桌面端
+  - 明暗主题切换
+  - 优雅的过渡动画
+
+- **内容组织**
+  - 首页展示最新文章和分类
+  - 文章分类浏览
+  - 标签云导航
+
+## 页面结构
+
+- `/` - 首页，展示个人简介和最新文章
+- `/posts` - 文章列表页
+- `/posts/[slug]` - 文章详情页
+- `/categories` - 分类页面
+- `/categories/[category]` - 分类详情页，展示该分类下的所有文章
+- `/tags` - 标签页面
+- `/tags/[tag]` - 标签详情页，展示包含该标签的所有文章
+
+## 技术栈
+
+- Next.js 14
+- TypeScript
+- Tailwind CSS
+- MDX
+- date-fns
+
+## 本地开发
 
 ```bash
+# 安装依赖
+npm install
+
+# 启动开发服务器
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+
+# 构建生产版本
+npm run build
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## 部署
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
-
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+项目使用 Next.js，可以轻松部署到 Vercel 等平台。

@@ -1,6 +1,6 @@
 import type { Config } from "tailwindcss";
 
-export default {
+const config: Config = {
   content: [
     "./pages/**/*.{js,ts,jsx,tsx,mdx}",
     "./components/**/*.{js,ts,jsx,tsx,mdx}",
@@ -16,64 +16,11 @@ export default {
       typography: {
         DEFAULT: {
           css: {
-            fontSize: '0.9375rem',
-            lineHeight: '1.6',
-            maxWidth: '65ch',
+            fontSize: '1rem',
+            lineHeight: '1.75',
             p: {
-              marginTop: '0.8em',
-              marginBottom: '0.8em',
-            },
-            '[class~="lead"]': {
-              fontSize: '1.1em',
-            },
-            h1: {
-              fontSize: '1.75em',
-              marginTop: '1.2em',
-              marginBottom: '0.6em',
-              lineHeight: '1.2',
-              fontWeight: '700',
-              borderBottom: '1px solid var(--tw-prose-hr)',
-              paddingBottom: '0.3em',
-            },
-            h2: {
-              fontSize: '1.4em',
-              marginTop: '1.2em',
-              marginBottom: '0.6em',
-              lineHeight: '1.3',
-              fontWeight: '600',
-              color: 'var(--tw-prose-headings)',
-              '&::before': {
-                content: '""',
-                display: 'inline-block',
-                width: '3px',
-                height: '0.9em',
-                backgroundColor: 'var(--tw-prose-links)',
-                marginRight: '0.4em',
-                verticalAlign: 'text-bottom',
-              },
-            },
-            h3: {
-              fontSize: '1.2em',
               marginTop: '1em',
-              marginBottom: '0.5em',
-              lineHeight: '1.4',
-              fontWeight: '600',
-              color: 'var(--tw-prose-headings)',
-              '&::before': {
-                content: '"#"',
-                marginRight: '0.4em',
-                color: 'var(--tw-prose-links)',
-                opacity: '0.5',
-              },
-            },
-            h4: {
-              fontSize: '1.1em',
-              marginTop: '1em',
-              marginBottom: '0.4em',
-              lineHeight: '1.4',
-              fontWeight: '600',
-              color: 'var(--tw-prose-headings)',
-              fontStyle: 'italic',
+              marginBottom: '1em',
             },
             'code::before': {
               content: '""',
@@ -87,24 +34,60 @@ export default {
               borderRadius: '0.25em',
               fontSize: '0.875em',
             },
-            ul: {
-              marginTop: '0.8em',
-              marginBottom: '0.8em',
-              paddingLeft: '1.2em',
+            h1: {
+              fontSize: '1.875em',
+              marginTop: '2em',
+              marginBottom: '1em',
             },
-            ol: {
-              marginTop: '0.8em',
-              marginBottom: '0.8em',
-              paddingLeft: '1.2em',
+            h2: {
+              fontSize: '1.5em',
+              marginTop: '1.75em',
+              marginBottom: '0.75em',
+            },
+            h3: {
+              fontSize: '1.25em',
+              marginTop: '1.5em',
+              marginBottom: '0.75em',
+            },
+            ul: {
+              marginTop: '0.75em',
+              marginBottom: '0.75em',
+              paddingLeft: '1.25em',
             },
             li: {
-              marginTop: '0.3em',
-              marginBottom: '0.3em',
+              marginTop: '0.375em',
+              marginBottom: '0.375em',
+            },
+            'ul > li': {
+              paddingLeft: '0.375em',
+            },
+            '> ul > li p': {
+              marginTop: '0.375em',
+              marginBottom: '0.375em',
             },
             blockquote: {
-              marginTop: '1em',
-              marginBottom: '1em',
+              fontStyle: 'italic',
+              fontSize: '0.875em',
+              lineHeight: '1.6',
+              marginTop: '1.5em',
+              marginBottom: '1.5em',
               paddingLeft: '1em',
+            },
+          },
+        },
+        about: {
+          css: {
+            'code::before': {
+              content: '""',
+            },
+            'code::after': {
+              content: '""',
+            },
+            code: {
+              backgroundColor: 'var(--tw-prose-pre-bg)',
+              padding: '0.25rem 0.375rem',
+              borderRadius: '0.375rem',
+              fontWeight: '400',
             },
           },
         },
@@ -112,4 +95,6 @@ export default {
     },
   },
   plugins: [require('@tailwindcss/typography')],
-} satisfies Config;
+};
+
+export default config;

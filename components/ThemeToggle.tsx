@@ -1,37 +1,13 @@
 'use client';
 
-import { useEffect, useState } from 'react';
 import { Moon, Sun } from 'lucide-react';
+import { useTheme } from './ThemeProvider';
 
 export default function ThemeToggle() {
-  const [theme, setTheme] = useState<'light' | 'dark'>('light');
-
-  useEffect(() => {
-    // Check if theme is stored in localStorage
-    const storedTheme = localStorage.getItem('theme');
-    
-    if (storedTheme === 'dark' || 
-      (!storedTheme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-      setTheme('dark');
-      document.documentElement.classList.add('dark');
-    } else {
-      setTheme('light');
-      document.documentElement.classList.remove('dark');
-    }
-  }, []);
+  const { theme, setTheme } = useTheme();
 
   const toggleTheme = () => {
-    const newTheme = theme === 'light' ? 'dark' : 'light';
-    setTheme(newTheme);
-    
-    // Update DOM and localStorage
-    if (newTheme === 'dark') {
-      document.documentElement.classList.add('dark');
-      localStorage.setItem('theme', 'dark');
-    } else {
-      document.documentElement.classList.remove('dark');
-      localStorage.setItem('theme', 'light');
-    }
+    setTheme(theme === 'light' ? 'dark' : 'light');
   };
 
   return (

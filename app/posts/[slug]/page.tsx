@@ -2,11 +2,28 @@ import { getPostBySlug } from '@/lib/posts'
 import { MDXRemote } from 'next-mdx-remote/rsc'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
+import { createMetadata } from '@/lib/metadata'
+import OptimizedImage from '@/components/OptimizedImage'
+import type { Metadata } from 'next'
 
 interface PostPageProps {
   params: {
     slug: string
   }
+}
+
+export async function generateMetadata({ params }: PostPageProps): Promise<Metadata> {
+  const post = getPostBySlug(params.slug)
+  if (!post) return {}
+
+  return createMetadata({
+    title: post.title,
+    description: post.excerpt,
+    path: `/posts/${params.slug}`,
+    type: 'article',
+    publishedTime: post.date,
+    image: post.coverImage, // 如果文章有封面图
+  })
 }
 
 function TableOfContents({ toc }) {
@@ -41,6 +58,16 @@ export default function PostPage({ params }: PostPageProps) {
     notFound()
   }
 
+  // 自定义 MDX 组件
+  const components = {
+    img: (props: any) => (
+      <OptimizedImage
+        {...props}
+        className="rounded-lg my-8"
+      />
+    ),
+  }
+
   return (
     <div className="container mx-auto px-4">
       <div className="lg:flex lg:gap-8">
@@ -69,7 +96,18 @@ export default function PostPage({ params }: PostPageProps) {
             <h1 className="mt-2 text-3xl font-bold tracking-tight text-gray-900 dark:text-white sm:text-4xl">
               {post.title}
             </h1>
-            
+            {post.coverImage && (
+              <div className="mt-8">
+                <OptimizedImage
+                  src={post.coverImage}
+                  alt={post.title}
+                  width={1200}
+                  height={630}
+                  priority
+                  className="rounded-xl"
+                />
+              </div>
+            )}
             {/* 分类和标签 */}
             <div className="mt-4 flex flex-wrap gap-2">
               {post.categories.map((category) => (
@@ -92,10 +130,7 @@ export default function PostPage({ params }: PostPageProps) {
               ))}
             </div>
           </header>
-          
-          <div className="prose-headings:scroll-mt-20 prose-headings:font-semibold prose-a:text-blue-600 hover:prose-a:text-blue-500">
-            <MDXRemote source={post.content} />
-          </div>
+          <MDXRemote source={post.content} components={components} />
         </article>
       </div>
     </div>

@@ -1,5 +1,13 @@
 import { getAllPosts } from '@/lib/posts'
 import Link from 'next/link'
+import { createMetadata } from '@/lib/metadata'
+import OptimizedImage from '@/components/OptimizedImage'
+
+export const metadata = createMetadata({
+  title: '文章列表',
+  description: '所有博客文章的列表',
+  path: '/posts',
+})
 
 export default function PostsPage() {
   const posts = getAllPosts()
@@ -15,6 +23,17 @@ export default function PostsPage() {
             key={post.slug}
             className="relative isolate flex flex-col gap-4 rounded-2xl bg-white p-6 shadow-sm dark:bg-gray-800"
           >
+            {post.coverImage && (
+              <Link href={`/posts/${post.slug}`} className="relative block aspect-[16/9] overflow-hidden rounded-lg">
+                <OptimizedImage
+                  src={post.coverImage}
+                  alt={post.title}
+                  width={600}
+                  height={338}
+                  className="object-cover transition-transform hover:scale-105"
+                />
+              </Link>
+            )}
             <div className="flex flex-col gap-2">
               <time className="text-sm text-gray-500 dark:text-gray-400">
                 {new Date(post.date).toLocaleDateString('zh-CN', {

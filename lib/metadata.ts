@@ -1,15 +1,15 @@
-import type { Metadata } from 'next';
+import type { Metadata } from 'next'
 
-const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
+const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'
 
 interface GenerateMetadataProps {
-  title?: string;
-  description?: string;
-  image?: string;
-  path?: string;
-  type?: 'website' | 'article';
-  publishedTime?: string;
-  author?: string;
+  title?: string
+  description?: string
+  image?: string
+  path?: string
+  type?: 'website' | 'article'
+  publishedTime?: string
+  author?: string
 }
 
 export function createMetadata({
@@ -19,10 +19,10 @@ export function createMetadata({
   path = '',
   type = 'website',
   publishedTime,
-  author = '刘欢',
+  author = '大地飞花',
 }: GenerateMetadataProps): Metadata {
-  const url = `${baseUrl}${path}`;
-  const ogImage = image.startsWith('http') ? image : `${baseUrl}${image}`;
+  const url = `${baseUrl}${path}`
+  const ogImage = image.startsWith('http') ? image : `${baseUrl}${image}`
 
   return {
     title: title + ' | 个人博客',
@@ -70,5 +70,5 @@ export function createMetadata({
         'max-snippet': -1,
       },
     },
-  };
+  }
 }

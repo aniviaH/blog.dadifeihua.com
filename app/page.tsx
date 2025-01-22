@@ -40,7 +40,7 @@ export default function Home() {
             </div>
             <div className="flex-1">
               <h1 className="text-4xl font-bold tracking-tight text-gray-900 dark:text-white sm:text-5xl">
-                刘欢的博客
+                大地飞花的博客
               </h1>
               <p className="mt-4 text-lg leading-8 text-gray-600 dark:text-gray-300">
                 热爱技术，热爱生活，记录成长的点点滴滴。

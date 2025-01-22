@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import { Geist, Geist_Mono } from 'next/font/google'
 import './globals.css'
 import SearchBar from '@/components/SearchBar'
+import ThemeToggle from '@/components/ThemeToggle'
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -24,7 +25,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="zh">
+    <html lang="zh" suppressHydrationWarning>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen bg-gray-50 dark:bg-gray-900`}
       >
@@ -43,7 +44,10 @@ export default function RootLayout({
                 </a>
               </nav>
               <div className="hidden sm:block">
-                <SearchBar />
+                <div className="flex items-center gap-4">
+                  <SearchBar />
+                  <ThemeToggle />
+                </div>
               </div>
             </div>
           </div>

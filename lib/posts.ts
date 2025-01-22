@@ -37,7 +37,7 @@ export function getAllPosts(): Post[] {
       excerpt: data.excerpt || '',
       content,
       categories: data.categories || [],
-      tags: data.tags || [],
+      tags: Array.isArray(data.tags) ? data.tags : [],
       coverImage: data.coverImage,
     }
   })
@@ -67,7 +67,7 @@ export function getPostBySlug(slug: string): Post | null {
       excerpt: data.excerpt || '',
       content,
       categories: data.categories || [],
-      tags: data.tags || [],
+      tags: Array.isArray(data.tags) ? data.tags : [],
       coverImage: data.coverImage,
       toc,
     }
@@ -83,11 +83,22 @@ export function getAllCategories(): string[] {
   return Array.from(categories)
 }
 
-export function getAllTags(): string[] {
+export function getAllTags(): { [key: string]: Post[] } {
   const posts = getAllPosts()
-  const tags = new Set<string>()
-  posts.forEach(post => post.tags.forEach(tag => tags.add(tag)))
-  return Array.from(tags)
+  const tags: { [key: string]: Post[] } = {}
+
+  posts.forEach(post => {
+    if (Array.isArray(post.tags)) {
+      post.tags.forEach(tag => {
+        if (!tags[tag]) {
+          tags[tag] = []
+        }
+        tags[tag].push(post)
+      })
+    }
+  })
+
+  return tags
 }
 
 export function getPostsByCategory(category: string): Post[] {
@@ -97,7 +108,7 @@ export function getPostsByCategory(category: string): Post[] {
 
 export function getPostsByTag(tag: string): Post[] {
   const posts = getAllPosts()
-  return posts.filter(post => post.tags.includes(tag))
+  return posts.filter(post => Array.isArray(post.tags) && post.tags.includes(tag))
 }
 
 export function searchPosts(query: string): Post[] {
@@ -110,4 +121,63 @@ export function searchPosts(query: string): Post[] {
     post.tags.some(tag => tag.toLowerCase().includes(searchTerm)) ||
     post.categories.some(category => category.toLowerCase().includes(searchTerm))
   )
+}
+
+export function getPostSlugs() {
+  return fs.readdirSync(postsDirectory)
+}
+
+export function getPostBySlugNew(slug: string) {
+  const realSlug = slug.replace(/\.mdx$/, '')
+  const fullPath = path.join(postsDirectory, `${realSlug}.mdx`)
+  const fileContents = fs.readFileSync(fullPath, 'utf8')
+  const { data, content } = matter(fileContents)
+
+  const post: Post = {
+    slug: realSlug,
+    title: data.title,
+    date: data.date,
+    content,
+    excerpt: data.excerpt || '',
+    coverImage: data.coverImage,
+    tags: Array.isArray(data.tags) ? data.tags : []
+  }
+
+  return post
+}
+
+export function getAllTagsNew(): { [key: string]: Post[] } {
+  const posts = getAllPosts()
+  const tags: { [key: string]: Post[] } = {}
+
+  posts.forEach(post => {
+    if (Array.isArray(post.tags)) {
+      post.tags.forEach(tag => {
+        if (!tags[tag]) {
+          tags[tag] = []
+        }
+        tags[tag].push(post)
+      })
+    }
+  })
+
+  return tags
+}
+
+export function getPostsByTagNew(tag: string): Post[] {
+  const posts = getAllPosts()
+  return posts.filter(post => Array.isArray(post.tags) && post.tags.includes(tag))
+}
+
+export function getRelatedPosts(currentSlug: string, tags: string[], limit = 3): Post[] {
+  const posts = getAllPosts()
+  const relatedPosts = posts
+    .filter(post => post.slug !== currentSlug && post.tags?.some(tag => tags.includes(tag)))
+    .sort((a, b) => {
+      const aCommonTags = a.tags?.filter(tag => tags.includes(tag)).length || 0
+      const bCommonTags = b.tags?.filter(tag => tags.includes(tag)).length || 0
+      return bCommonTags - aCommonTags
+    })
+    .slice(0, limit)
+  return relatedPosts
 }

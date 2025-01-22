@@ -57,7 +57,7 @@ export default function PostPage({ params }: PostPageProps) {
         </aside>
 
         {/* 主要内容 */}
-        <article className="prose prose-lg dark:prose-invert mx-auto lg:prose-xl">
+        <article className="prose dark:prose-invert mx-auto max-w-4xl">
           <header className="mb-8 not-prose">
             <time className="text-sm text-gray-500 dark:text-gray-400">
               {new Date(post.date).toLocaleDateString('zh-CN', {

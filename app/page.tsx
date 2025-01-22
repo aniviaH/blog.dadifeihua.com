@@ -1,11 +1,14 @@
 import OptimizedImage from '@/components/OptimizedImage'
 import Link from 'next/link'
+import { getAllCategories } from '@/lib/posts'
 
 export default function Home() {
+  const categories = getAllCategories()
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-white to-gray-50 dark:from-gray-900 dark:to-gray-800">
       <main className="container mx-auto px-4 py-16 sm:py-24">
-        <div className="max-w-2xl mx-auto text-center sm:text-left">
+        <div className="max-w-4xl mx-auto">
           <div className="flex flex-col sm:flex-row items-center gap-8 mb-12">
             <div className="w-40 h-40 shrink-0">
               <OptimizedImage
@@ -17,7 +20,7 @@ export default function Home() {
                 className="rounded-full ring-4 ring-white dark:ring-gray-800 shadow-lg"
               />
             </div>
-            <div className="flex-1">
+            <div className="flex-1 text-center sm:text-left">
               <h1 className="text-4xl font-bold tracking-tight text-gray-900 dark:text-white sm:text-5xl">
                 刘欢的博客
               </h1>
@@ -41,27 +44,62 @@ export default function Home() {
             </div>
           </div>
 
-          <div className="grid gap-8 sm:grid-cols-2">
-            <div className="rounded-2xl border border-gray-200 dark:border-gray-700 p-8 text-center sm:text-left">
+          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {/* 最新文章卡片 */}
+            <div className="rounded-2xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 p-6 hover:border-gray-300 dark:hover:border-gray-600 transition-colors">
               <h2 className="text-lg font-semibold leading-8 text-gray-900 dark:text-white mb-4">
                 最新文章
               </h2>
               <Link
                 href="/posts"
-                className="text-sm leading-6 text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400"
+                className="inline-flex items-center text-sm text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 group"
               >
-                查看全部文章 →
+                查看全部文章
+                <span className="ml-1 transition-transform group-hover:translate-x-1">→</span>
               </Link>
             </div>
-            <div className="rounded-2xl border border-gray-200 dark:border-gray-700 p-8 text-center sm:text-left">
+
+            {/* 分类卡片 */}
+            <div className="rounded-2xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 p-6 hover:border-gray-300 dark:hover:border-gray-600 transition-colors">
+              <h2 className="text-lg font-semibold leading-8 text-gray-900 dark:text-white mb-4">
+                文章分类
+              </h2>
+              <div className="mb-4 space-y-2">
+                {categories.map(category => (
+                  <Link
+                    key={category.slug}
+                    href={`/categories/${category.slug}`}
+                    className="flex items-center justify-between group"
+                  >
+                    <span className="text-sm text-gray-600 dark:text-gray-400 group-hover:text-blue-600 dark:group-hover:text-blue-400">
+                      {category.name}
+                    </span>
+                    <span className="text-xs text-gray-500 dark:text-gray-500">
+                      {category.count} 篇
+                    </span>
+                  </Link>
+                ))}
+              </div>
+              <Link
+                href="/categories"
+                className="inline-flex items-center text-sm text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 group"
+              >
+                浏览所有分类
+                <span className="ml-1 transition-transform group-hover:translate-x-1">→</span>
+              </Link>
+            </div>
+
+            {/* 标签云卡片 */}
+            <div className="rounded-2xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 p-6 hover:border-gray-300 dark:hover:border-gray-600 transition-colors">
               <h2 className="text-lg font-semibold leading-8 text-gray-900 dark:text-white mb-4">
                 标签云
               </h2>
               <Link
                 href="/tags"
-                className="text-sm leading-6 text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400"
+                className="inline-flex items-center text-sm text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 group"
               >
-                浏览所有标签 →
+                浏览所有标签
+                <span className="ml-1 transition-transform group-hover:translate-x-1">→</span>
               </Link>
             </div>
           </div>

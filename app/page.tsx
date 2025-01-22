@@ -1,9 +1,27 @@
 import OptimizedImage from '@/components/OptimizedImage'
 import Link from 'next/link'
-import { getAllCategories } from '@/lib/posts'
+import { getAllCategories, getAllPosts } from '@/lib/posts'
+import { format } from 'date-fns'
+import { zhCN } from 'date-fns/locale'
 
 export default function Home() {
   const categories = getAllCategories()
+  const posts = getAllPosts().slice(0, 3)
+  const allTags = getAllPosts().reduce(
+    (tags, post) => {
+      post.tags?.forEach(tag => {
+        const existing = tags.find(t => t.name === tag)
+        if (existing) {
+          existing.count++
+        } else {
+          tags.push({ name: tag, count: 1 })
+        }
+      })
+      return tags
+    },
+    [] as { name: string; count: number }[]
+  )
+  const topTags = allTags.sort((a, b) => b.count - a.count).slice(0, 3)
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-white to-gray-50 dark:from-gray-900 dark:to-gray-800">
@@ -50,7 +68,24 @@ export default function Home() {
               <h2 className="text-lg font-semibold leading-8 text-gray-900 dark:text-white mb-4">
                 最新文章
               </h2>
-              <div className="flex-1">{/* 这里可以添加最新文章列表 */}</div>
+              <div className="flex-1 space-y-4">
+                {posts.map(post => (
+                  <Link key={post.slug} href={`/posts/${post.slug}`} className="block group">
+                    <h3 className="text-sm font-medium text-gray-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 line-clamp-1">
+                      {post.title}
+                    </h3>
+                    <time className="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                      {format(new Date(post.date), 'PPP', { locale: zhCN })}
+                    </time>
+                  </Link>
+                ))}
+                {getAllPosts().length > 3 && (
+                  <div className="flex items-center justify-between text-sm text-gray-500 dark:text-gray-400">
+                    <span>更多文章</span>
+                    <span className="text-xs">+{getAllPosts().length - 3}</span>
+                  </div>
+                )}
+              </div>
               <Link
                 href="/posts"
                 className="text-sm leading-6 text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 mt-4 inline-block"
@@ -65,7 +100,7 @@ export default function Home() {
                 文章分类
               </h2>
               <div className="flex-1 space-y-2">
-                {categories.map(category => (
+                {categories.slice(0, 3).map(category => (
                   <Link
                     key={category.slug}
                     href={`/categories/${category.slug}`}
@@ -79,6 +114,12 @@ export default function Home() {
                     </span>
                   </Link>
                 ))}
+                {categories.length > 3 && (
+                  <div className="flex items-center justify-between text-sm text-gray-500 dark:text-gray-400">
+                    <span>更多分类</span>
+                    <span className="text-xs">+{categories.length - 3}</span>
+                  </div>
+                )}
               </div>
               <Link
                 href="/categories"
@@ -93,7 +134,29 @@ export default function Home() {
               <h2 className="text-lg font-semibold leading-8 text-gray-900 dark:text-white mb-4">
                 标签云
               </h2>
-              <div className="flex-1">{/* 这里可以添加标签云内容 */}</div>
+              <div className="flex-1">
+                <div className="flex flex-wrap gap-2">
+                  {topTags.map(tag => (
+                    <Link
+                      key={tag.name}
+                      href={`/tags/${tag.name}`}
+                      className="inline-flex items-center rounded-full px-3 py-1 text-sm bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-gray-100 hover:bg-blue-100 dark:hover:bg-blue-900 transition-colors group"
+                    >
+                      <span className="group-hover:text-blue-600 dark:group-hover:text-blue-400">
+                        {tag.name}
+                      </span>
+                      <span className="ml-1 text-xs text-gray-500 dark:text-gray-400">
+                        {tag.count}
+                      </span>
+                    </Link>
+                  ))}
+                  {allTags.length > 3 && (
+                    <div className="inline-flex items-center rounded-full px-3 py-1 text-sm bg-gray-50 dark:bg-gray-800/50 text-gray-500 dark:text-gray-400">
+                      +{allTags.length - 3}
+                    </div>
+                  )}
+                </div>
+              </div>
               <Link
                 href="/tags"
                 className="text-sm leading-6 text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 mt-4 inline-block"

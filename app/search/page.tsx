@@ -1,6 +1,7 @@
 import { searchPosts } from '@/lib/posts'
 import SearchBar from '@/components/SearchBar'
 import Link from 'next/link'
+import { Suspense } from 'react'
 
 interface SearchPageProps {
   searchParams: Promise<{ q?: string }>
@@ -18,7 +19,9 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
           搜索文章
         </h1>
         <div className="mt-4 flex justify-center">
-          <SearchBar />
+          <Suspense fallback={<div className="w-full max-w-lg h-10" />}>
+            <SearchBar />
+          </Suspense>
         </div>
       </div>
 

@@ -6,6 +6,7 @@ import ThemeToggle from '@/components/ThemeToggle'
 import ThemeProvider from '@/components/ThemeProvider'
 import Link from 'next/link'
 import { FaGithub } from 'react-icons/fa'
+import { Suspense } from 'react'
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -70,7 +71,11 @@ export default function RootLayout({
                 </nav>
                 <div className="hidden sm:block">
                   <div className="flex items-center gap-4">
-                    <SearchBar />
+                    <div className="flex flex-1 justify-center px-2">
+                      <Suspense fallback={<div className="w-full max-w-lg h-10" />}>
+                        <SearchBar />
+                      </Suspense>
+                    </div>
                     <ThemeToggle />
                     <a
                       href="https://github.com/aniviah"

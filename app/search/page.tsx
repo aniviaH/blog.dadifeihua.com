@@ -3,11 +3,12 @@ import SearchBar from '@/components/SearchBar'
 import Link from 'next/link'
 
 interface SearchPageProps {
-  searchParams: { q?: string }
+  searchParams: Promise<{ q?: string }>
 }
 
-export default function SearchPage({ searchParams }: SearchPageProps) {
-  const query = searchParams.q || ''
+export default async function SearchPage({ searchParams }: SearchPageProps) {
+  const q = (await searchParams).q
+  const query = q || ''
   const posts = query ? searchPosts(query) : []
 
   return (
@@ -24,12 +25,10 @@ export default function SearchPage({ searchParams }: SearchPageProps) {
       {query && (
         <div className="space-y-4">
           <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
-            {posts.length > 0
-              ? `找到 ${posts.length} 篇相关文章`
-              : '没有找到相关文章'}
+            {posts.length > 0 ? `找到 ${posts.length} 篇相关文章` : '没有找到相关文章'}
           </h2>
           <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
-            {posts.map((post) => (
+            {posts.map(post => (
               <article
                 key={post.slug}
                 className="relative isolate flex flex-col gap-4 rounded-2xl bg-white p-6 shadow-sm dark:bg-gray-800"
@@ -43,19 +42,14 @@ export default function SearchPage({ searchParams }: SearchPageProps) {
                     })}
                   </time>
                   <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
-                    <Link
-                      href={`/posts/${post.slug}`}
-                      className="hover:underline"
-                    >
+                    <Link href={`/posts/${post.slug}`} className="hover:underline">
                       {post.title}
                     </Link>
                   </h2>
-                  <p className="text-gray-600 dark:text-gray-300">
-                    {post.excerpt}
-                  </p>
+                  <p className="text-gray-600 dark:text-gray-300">{post.excerpt}</p>
                 </div>
                 <div className="mt-4 flex flex-wrap gap-2">
-                  {post.categories.map((category) => (
+                  {post.categories.map(category => (
                     <Link
                       key={category}
                       href={`/categories/${category}`}
@@ -64,7 +58,7 @@ export default function SearchPage({ searchParams }: SearchPageProps) {
                       {category}
                     </Link>
                   ))}
-                  {post.tags.map((tag) => (
+                  {post.tags.map(tag => (
                     <Link
                       key={tag}
                       href={`/tags/${tag}`}

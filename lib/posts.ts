@@ -219,6 +219,7 @@ export function getPostBySlugNew(slug: string) {
     excerpt: data.excerpt || '',
     coverImage: data.coverImage,
     tags: Array.isArray(data.tags) ? data.tags : [],
+    categories: data.categories || [],
   }
 
   return post

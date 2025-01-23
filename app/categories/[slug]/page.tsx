@@ -8,13 +8,14 @@ import { zhCN } from 'date-fns/locale'
 import { ArrowLeftIcon } from '@heroicons/react/20/solid'
 
 interface CategoryPageProps {
-  params: {
+  params: Promise<{
     slug: string
-  }
+  }>
 }
 
 export async function generateMetadata({ params }: CategoryPageProps): Promise<Metadata> {
-  const category = getCategoryBySlug(params.slug)
+  const slug = (await params).slug
+  const category = getCategoryBySlug(slug)
 
   if (!category) {
     return {}
@@ -23,18 +24,19 @@ export async function generateMetadata({ params }: CategoryPageProps): Promise<M
   return createMetadata({
     title: `${category.name} - 文章分类`,
     description: category.description || `${category.name}分类下的所有文章`,
-    path: `/categories/${params.slug}`,
+    path: `/categories/${slug}`,
   })
 }
 
-export default function CategoryPage({ params }: CategoryPageProps) {
-  const category = getCategoryBySlug(params.slug)
+export default async function CategoryPage({ params }: CategoryPageProps) {
+  const slug = (await params).slug
+  const category = getCategoryBySlug(slug)
 
   if (!category) {
     notFound()
   }
 
-  const posts = getPostsByCategory(params.slug)
+  const posts = getPostsByCategory(slug)
 
   return (
     <div className="container mx-auto px-4 py-12">

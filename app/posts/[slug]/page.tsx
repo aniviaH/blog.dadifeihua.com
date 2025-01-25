@@ -10,7 +10,7 @@ import remarkGfm from 'remark-gfm'
 import type { Metadata } from 'next'
 
 type Props = {
-  params: { slug: string }
+  params: Promise<{ slug: string }>
 }
 
 type PostMeta = {
@@ -24,7 +24,8 @@ type PostMeta = {
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const post = getPostBySlug(params.slug)
+  const slug = (await params).slug
+  const post = getPostBySlug(slug)
 
   if (!post) {
     return {}
@@ -52,8 +53,9 @@ export async function generateStaticParams() {
   }))
 }
 
-export default function PostPage({ params }: Props) {
-  const post = getPostBySlug(params.slug)
+export default async function PostPage({ params }: Props) {
+  const slug = (await params).slug
+  const post = getPostBySlug(slug)
 
   if (!post) {
     notFound()

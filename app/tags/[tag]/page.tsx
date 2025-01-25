@@ -4,9 +4,9 @@ import Link from 'next/link'
 import { notFound } from 'next/navigation'
 
 interface TagPageProps {
-  params: {
+  params: Promise<{
     tag: string
-  }
+  }>
 }
 
 export async function generateMetadata({ params }: TagPageProps) {
@@ -40,13 +40,11 @@ export default async function TagPage({ params }: TagPageProps) {
           <h1 className="text-4xl font-bold tracking-tight text-gray-900 dark:text-white sm:text-5xl">
             #{decodedTag}
           </h1>
-          <p className="mt-4 text-lg text-gray-600 dark:text-gray-400">
-            共 {posts.length} 篇文章
-          </p>
+          <p className="mt-4 text-lg text-gray-600 dark:text-gray-400">共 {posts.length} 篇文章</p>
         </header>
 
         <div className="space-y-8">
-          {posts.map((post) => (
+          {posts.map(post => (
             <article
               key={post.slug}
               className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm p-6 hover:shadow-md transition-shadow"
@@ -66,11 +64,9 @@ export default async function TagPage({ params }: TagPageProps) {
                   {post.title}
                 </Link>
               </h2>
-              <p className="mt-3 text-gray-600 dark:text-gray-400 line-clamp-2">
-                {post.excerpt}
-              </p>
+              <p className="mt-3 text-gray-600 dark:text-gray-400 line-clamp-2">{post.excerpt}</p>
               <div className="mt-4 flex flex-wrap gap-2">
-                {post.tags.map((tag) => (
+                {post.tags.map(tag => (
                   <Link
                     key={tag}
                     href={`/tags/${tag}`}

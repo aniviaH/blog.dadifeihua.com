@@ -90,6 +90,7 @@ export function getAllCategories(): Category[] {
       post.categories.forEach(categoryName => {
         // 使用原始分类名作为 slug，这样可以保持中文
         const slug = categoryName
+        console.log('Processing category:', { categoryName, slug })
 
         const existing = categoriesMap.get(slug)
         if (existing) {
@@ -105,19 +106,32 @@ export function getAllCategories(): Category[] {
     }
   })
 
-  return Array.from(categoriesMap.values()).sort((a, b) => b.count - a.count)
+  const categories = Array.from(categoriesMap.values())
+  console.log('All categories:', categories)
+  return categories.sort((a, b) => b.count - a.count)
 }
 
 // 根据 slug 获取分类信息
 export function getCategoryBySlug(slug: string): Category | null {
+  console.log('Looking for category with slug:', slug)
   const categories = getAllCategories()
-  return categories.find(category => category.slug === slug) || null
+  // 使用 decodeURIComponent 解码 URL 编码的 slug
+  const decodedSlug = decodeURIComponent(slug)
+  console.log('Decoded slug:', decodedSlug)
+  const category = categories.find(category => category.slug === decodedSlug)
+  console.log('Found category:', category)
+  return category || null
 }
 
 // 获取指定分类下的所有文章
 export function getPostsByCategory(categorySlug: string): Post[] {
   const posts = getAllPosts()
-  return posts.filter(post => post.categories.some(category => category === categorySlug))
+  // 使用 decodeURIComponent 解码 URL 编码的 slug
+  const decodedSlug = decodeURIComponent(categorySlug)
+  return posts.filter(
+    post =>
+      Array.isArray(post.categories) && post.categories.some(category => category === decodedSlug)
+  )
 }
 
 export function getPostBySlug(slug: string): Post | null {
@@ -219,6 +233,7 @@ export function getPostBySlugNew(slug: string) {
     excerpt: data.excerpt || '',
     coverImage: data.coverImage,
     tags: Array.isArray(data.tags) ? data.tags : [],
+    categories: data.categories || [],
   }
 
   return post

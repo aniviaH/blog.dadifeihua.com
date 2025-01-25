@@ -1,30 +1,33 @@
-'use client';
+'use client'
 
-import Link from 'next/link';
-import { useCallback, useMemo } from 'react';
+import Link from 'next/link'
+import { useCallback, useMemo } from 'react'
 
 interface TagCloudProps {
   tags: Array<{
-    name: string;
-    count: number;
-  }>;
+    name: string
+    count: number
+  }>
 }
 
 export default function TagCloud({ tags }: TagCloudProps) {
-  const maxCount = useMemo(() => Math.max(...tags.map(tag => tag.count)), [tags]);
-  const minCount = useMemo(() => Math.min(...tags.map(tag => tag.count)), [tags]);
+  const maxCount = useMemo(() => Math.max(...tags.map(tag => tag.count)), [tags])
+  const minCount = useMemo(() => Math.min(...tags.map(tag => tag.count)), [tags])
 
-  const getFontSize = useCallback((count: number) => {
-    if (maxCount === minCount) return 1;
-    const size = 0.8 + ((count - minCount) / (maxCount - minCount)) * 1.2;
-    return size;
-  }, [maxCount, minCount]);
+  const getFontSize = useCallback(
+    (count: number) => {
+      if (maxCount === minCount) return 1
+      const size = 0.8 + ((count - minCount) / (maxCount - minCount)) * 1.2
+      return size
+    },
+    [maxCount, minCount]
+  )
 
-  const getColor = useCallback((count: number) => {
-    if (maxCount === minCount) return 60;
-    const hue = 200 + ((count - minCount) / (maxCount - minCount)) * 60;
-    return hue;
-  }, [maxCount, minCount]);
+  // const getColor = useCallback((count: number) => {
+  //   if (maxCount === minCount) return 60;
+  //   const hue = 200 + ((count - minCount) / (maxCount - minCount)) * 60;
+  //   return hue;
+  // }, [maxCount, minCount]);
 
   return (
     <div className="flex flex-wrap gap-6 justify-center items-center min-h-[120px]">
@@ -46,5 +49,5 @@ export default function TagCloud({ tags }: TagCloudProps) {
         </Link>
       ))}
     </div>
-  );
+  )
 }

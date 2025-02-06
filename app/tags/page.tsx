@@ -1,6 +1,7 @@
 import { getAllTags } from '@/lib/posts'
 import { createMetadata } from '@/lib/metadata'
 import TagCloud from '@/components/TagCloud'
+import Link from 'next/link'
 
 export const metadata = createMetadata({
   title: '标签云',
@@ -47,15 +48,13 @@ export default function TagsPage() {
                   #{index + 1}
                 </span>
               </h2>
-              <p className="text-gray-600 dark:text-gray-400">
-                {count} 篇文章
-              </p>
-              <a
+              <p className="text-gray-600 dark:text-gray-400">{count} 篇文章</p>
+              <Link
                 href={`/tags/${encodeURIComponent(name)}`}
                 className="mt-4 inline-flex items-center text-sm font-medium text-blue-600 hover:text-blue-500 dark:text-blue-400 dark:hover:text-blue-300"
               >
                 浏览文章 →
-              </a>
+              </Link>
             </div>
           ))}
         </div>

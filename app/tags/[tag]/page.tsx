@@ -33,7 +33,7 @@ export async function generateMetadata({ params }: TagPageProps) {
 
 export default async function TagPage({ params }: TagPageProps) {
   const { tag } = await params
-  const decodedTag = decodeURIComponent(tag)
+  const decodedTag = decodeURIComponent(decodeURIComponent(tag))
   const posts = getPostsByTag(decodedTag)
 
   if (!posts.length) {

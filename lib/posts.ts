@@ -116,7 +116,7 @@ export function getCategoryBySlug(slug: string): Category | null {
   console.log('Looking for category with slug:', slug)
   const categories = getAllCategories()
   // 使用 decodeURIComponent 解码 URL 编码的 slug
-  const decodedSlug = decodeURIComponent(decodeURIComponent(slug))
+  const decodedSlug = decodeURIComponent(slug)
   console.log('Decoded slug:', decodedSlug)
   const category = categories.find(category => category.slug === decodedSlug)
   console.log('Found category:', category)
@@ -127,7 +127,7 @@ export function getCategoryBySlug(slug: string): Category | null {
 export function getPostsByCategory(categorySlug: string): Post[] {
   const posts = getAllPosts()
   // 使用 decodeURIComponent 解码 URL 编码的 slug
-  const decodedSlug = decodeURIComponent(decodeURIComponent(categorySlug))
+  const decodedSlug = decodeURIComponent(categorySlug)
   console.log('getPostsByCategory - Decoded slug:', decodedSlug)
   return posts.filter(
     post =>

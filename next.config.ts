@@ -16,6 +16,12 @@ const nextConfig: NextConfig = {
   // 禁用自动路径解析
   skipTrailingSlashRedirect: true,
   skipMiddlewareUrlNormalize: true,
+  // 禁用文件名编码
+  experimental: {
+    disableOptimizedLoading: true,
+  },
+  // 使用原始路径
+  assetPrefix: '',
 }
 
 export default nextConfig

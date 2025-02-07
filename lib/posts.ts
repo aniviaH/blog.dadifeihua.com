@@ -88,17 +88,16 @@ export function getAllCategories(): Category[] {
   posts.forEach(post => {
     if (Array.isArray(post.categories)) {
       post.categories.forEach(categoryName => {
-        // 使用编码后的分类名作为 slug
-        const slug = encodeURIComponent(categoryName)
-        console.log('Processing category:', { categoryName, slug })
+        // 使用原始分类名作为 slug
+        console.log('Processing category:', categoryName)
 
-        const existing = categoriesMap.get(slug)
+        const existing = categoriesMap.get(categoryName)
         if (existing) {
           existing.count++
         } else {
-          categoriesMap.set(slug, {
+          categoriesMap.set(categoryName, {
             name: categoryName,
-            slug,
+            slug: categoryName,
             count: 1,
           })
         }
@@ -115,8 +114,8 @@ export function getAllCategories(): Category[] {
 export function getCategoryBySlug(slug: string): Category | null {
   console.log('Looking for category with slug:', slug)
   const categories = getAllCategories()
-  // 直接使用编码后的 slug 进行比较
-  const category = categories.find(category => category.slug === slug)
+  // 使用原始分类名进行比较
+  const category = categories.find(category => category.slug === decodeURIComponent(slug))
   console.log('Found category:', category)
   return category || null
 }
@@ -217,8 +216,11 @@ export function getAllTags(): { [key: string]: Post[] } {
 }
 
 export function getPostsByTag(tag: string): Post[] {
+  console.log('Getting posts for tag:', tag)
   const posts = getAllPosts()
-  return posts.filter(post => Array.isArray(post.tags) && post.tags.includes(tag))
+  const decodedTag = decodeURIComponent(tag)
+  console.log('Decoded tag:', decodedTag)
+  return posts.filter(post => Array.isArray(post.tags) && post.tags.includes(decodedTag))
 }
 
 export function searchPosts(query: string): Post[] {

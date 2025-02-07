@@ -43,7 +43,7 @@ export default function Home() {
                 大地飞花的博客
               </h1>
               <p className="mt-4 text-lg leading-8 text-gray-600 dark:text-gray-300">
-                热爱技术，热爱生活，记录成长的点点滴滴～～～
+                热爱技术，热爱生活，记录成长的点点滴滴～～～～
               </p>
               <div className="mt-6 flex flex-wrap justify-center sm:justify-start gap-4">
                 <Link

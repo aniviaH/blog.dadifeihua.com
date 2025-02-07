@@ -4,8 +4,6 @@
 
 🌐 **在线访问：**[https://aniviah.github.io/blog.dadifeihua.com](https://aniviah.github.io/blog.dadifeihua.com)
 
-[![预览图](https://repository-images.githubusercontent.com/739891048/c7d3a6c4-1c6d-4d3d-a9d5-7f2a1a4d7f4b)](https://aniviah.github.io/blog.dadifeihua.com)
-
 ## 功能特点
 
 - **文章管理**

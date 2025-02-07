@@ -1,7 +1,8 @@
 import type { NextConfig } from 'next'
 
 const nextConfig: NextConfig = {
-  output: 'export',
+  // build时生成静态页面，开发时使用 Next.js 内置服务器
+  output: process.env.NODE_ENV === 'production' ? 'export' : undefined,
   trailingSlash: true,
   images: {
     formats: ['image/avif', 'image/webp'],
@@ -22,6 +23,9 @@ const nextConfig: NextConfig = {
   },
   // 使用原始路径
   assetPrefix: '',
+  // 禁用路径规范化
+  reactStrictMode: false,
+  pageExtensions: ['js', 'jsx', 'ts', 'tsx'],
 }
 
 export default nextConfig

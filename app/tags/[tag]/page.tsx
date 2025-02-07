@@ -7,10 +7,9 @@ export async function generateStaticParams() {
   const tags = getAllTagNames()
   console.log('Generating static params for tags:', tags)
   return tags.map(tag => {
-    // 使用编码后的标签名作为路由参数
-    const encodedTag = encodeURIComponent(tag)
-    console.log('Tag:', tag, 'Encoded tag:', encodedTag)
-    return { tag: encodedTag }
+    // 使用原始标签名作为路由参数
+    console.log('Tag:', tag)
+    return { tag }
   })
 }
 

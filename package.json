@@ -7,8 +7,8 @@
     "url": "https://aniviah.github.io/blog.dadifeihua.com"
   },
   "scripts": {
-    "dev": "next dev --turbopack",
-    "build": "next build",
+    "dev": "NODE_ENV=development next dev --turbopack",
+    "build": "NODE_ENV=production next build",
     "start": "next start",
     "lint": "next lint",
     "prepare": "husky install",

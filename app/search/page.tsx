@@ -1,30 +1,26 @@
-import { searchPosts } from '@/lib/posts'
+'use client'
+
+import { searchPosts } from '@/lib/search'
 import SearchBar from '@/components/SearchBar'
 import Link from 'next/link'
-import { Suspense } from 'react'
+import { Suspense, useEffect, useState } from 'react'
+import { useSearchParams } from 'next/navigation'
 
-interface SearchPageProps {
-  searchParams: Promise<{ q?: string }>
-}
+function SearchResults() {
+  const searchParams = useSearchParams()
+  const [posts, setPosts] = useState<ReturnType<typeof searchPosts>>([])
+  const query = searchParams.get('q') || ''
 
-export default async function SearchPage({ searchParams }: SearchPageProps) {
-  const q = (await searchParams).q
-  const query = q || ''
-  const posts = query ? searchPosts(query) : []
+  useEffect(() => {
+    if (query) {
+      setPosts(searchPosts(query))
+    } else {
+      setPosts([])
+    }
+  }, [query])
 
   return (
-    <div className="space-y-8">
-      <div className="text-center">
-        <h1 className="text-3xl font-bold tracking-tight text-gray-900 dark:text-white sm:text-4xl">
-          搜索文章
-        </h1>
-        <div className="mt-4 flex justify-center">
-          <Suspense fallback={<div className="w-full max-w-lg h-10" />}>
-            <SearchBar />
-          </Suspense>
-        </div>
-      </div>
-
+    <div className="space-y-4">
       {query && (
         <div className="space-y-4">
           <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
@@ -76,6 +72,35 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
           </div>
         </div>
       )}
+    </div>
+  )
+}
+
+export default function SearchPage() {
+  return (
+    <div className="space-y-8">
+      <div className="text-center">
+        <h1 className="text-3xl font-bold tracking-tight text-gray-900 dark:text-white sm:text-4xl">
+          搜索文章
+        </h1>
+        <div className="mt-4 flex justify-center">
+          <Suspense fallback={<div className="w-full max-w-lg h-10" />}>
+            <SearchBar />
+          </Suspense>
+        </div>
+      </div>
+
+      <Suspense
+        fallback={
+          <div className="animate-pulse space-y-4">
+            <div className="h-4 bg-gray-200 rounded dark:bg-gray-700" />
+            <div className="h-32 bg-gray-200 rounded dark:bg-gray-700" />
+            <div className="h-32 bg-gray-200 rounded dark:bg-gray-700" />
+          </div>
+        }
+      >
+        <SearchResults />
+      </Suspense>
     </div>
   )
 }

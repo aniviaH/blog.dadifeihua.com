@@ -1,11 +1,18 @@
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
-import { getPostsByCategory, getCategoryBySlug } from '@/lib/posts'
+import { getPostsByCategory, getCategoryBySlug, getAllCategories } from '@/lib/posts'
 import { createMetadata } from '@/lib/metadata'
 import type { Metadata } from 'next'
 import { format } from 'date-fns'
 import { zhCN } from 'date-fns/locale'
 import { ArrowLeftIcon } from '@heroicons/react/20/solid'
+
+export async function generateStaticParams() {
+  const categories = getAllCategories()
+  return categories.map(category => ({
+    slug: category.slug,
+  }))
+}
 
 interface CategoryPageProps {
   params: Promise<{

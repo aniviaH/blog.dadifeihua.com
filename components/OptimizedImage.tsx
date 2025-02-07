@@ -29,7 +29,7 @@ export default function OptimizedImage({
   return (
     <div className={`overflow-hidden ${className}`}>
       <Image
-        src={src}
+        src={`${process.env.NEXT_PUBLIC_BASE_PATH || ''}${src}`}
         alt={alt}
         width={width}
         height={height}

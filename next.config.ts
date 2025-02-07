@@ -10,6 +10,9 @@ const nextConfig: NextConfig = {
     minimumCacheTTL: 60,
     unoptimized: true,
   },
+  compiler: {
+    removeConsole: false,
+  },
 }
 
 export default nextConfig

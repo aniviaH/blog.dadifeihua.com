@@ -42,9 +42,9 @@ jobs:
       - name: Move to dist
         run: |
           mkdir -p dist
-          mv out/* dist/
-          mv dist/404.html .
-          mv dist/.nojekyll .
+          cp -r out/* dist/
+          cp out/.nojekyll dist/
+          cp out/404.html .
       
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3

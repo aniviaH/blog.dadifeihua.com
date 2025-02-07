@@ -83,30 +83,38 @@ export function getAllPosts(): Post[] {
 // 获取所有分类
 export function getAllCategories(): Category[] {
   const posts = getAllPosts()
-  const categoriesMap = new Map<string, Category>()
+  const categoryPostsMap = new Map<string, Set<string>>()
 
   posts.forEach(post => {
     if (Array.isArray(post.categories)) {
       post.categories.forEach(categoryName => {
         // 使用原始分类名作为 slug
-        console.log('Processing category:', categoryName)
+        console.log('Processing category for post:', post.slug, categoryName)
 
-        const existing = categoriesMap.get(categoryName)
-        if (existing) {
-          existing.count++
-        } else {
-          categoriesMap.set(categoryName, {
-            name: categoryName,
-            slug: categoryName,
-            count: 1,
-          })
+        if (!categoryPostsMap.has(categoryName)) {
+          categoryPostsMap.set(categoryName, new Set())
         }
+        categoryPostsMap.get(categoryName)!.add(post.slug)
+        console.log(
+          `Category '${categoryName}' now has ${categoryPostsMap.get(categoryName)!.size} posts`
+        )
       })
     }
   })
 
-  const categories = Array.from(categoriesMap.values())
-  console.log('All categories:', categories)
+  const categories = Array.from(categoryPostsMap.entries()).map(([name, posts]) => {
+    console.log(
+      `Creating category object for '${name}' with ${posts.size} posts:`,
+      Array.from(posts)
+    )
+    return {
+      name,
+      slug: name,
+      count: posts.size,
+    }
+  })
+
+  console.log('All categories with counts:', categories)
   return categories.sort((a, b) => b.count - a.count)
 }
 

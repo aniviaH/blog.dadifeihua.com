@@ -14,30 +14,39 @@ export default function TagsPage() {
   const posts = getAllPosts()
   console.log('TagsPage: Found posts:', posts.length)
 
-  const tagCounts = new Map<string, number>()
+  // 使用 Set 来记录每个标签对应的文章
+  const tagPostsMap = new Map<string, Set<string>>()
 
-  // 统计每个标签的文章数量
+  // 统计每个标签的文章
   posts.forEach(post => {
     if (Array.isArray(post.tags)) {
       console.log('TagsPage: Processing tags for post:', post.slug, post.tags)
       post.tags.forEach(tag => {
-        const currentCount = tagCounts.get(tag) || 0
-        tagCounts.set(tag, currentCount + 1)
-        console.log('TagsPage: Tag count updated -', tag, currentCount + 1)
+        if (!tagPostsMap.has(tag)) {
+          tagPostsMap.set(tag, new Set())
+        }
+        tagPostsMap.get(tag)!.add(post.slug)
+        console.log('TagsPage: Tag post count updated -', tag, tagPostsMap.get(tag)!.size)
       })
     }
   })
 
-  console.log('TagsPage: Raw tag counts:', Object.fromEntries(tagCounts))
+  console.log(
+    'TagsPage: Raw tag posts:',
+    Object.fromEntries(Array.from(tagPostsMap.entries()).map(([tag, posts]) => [tag, posts.size]))
+  )
 
   // 转换为数组并排序
-  const sortedTags = Array.from(tagCounts.entries())
-    .map(([name, count]) => ({ name, count }))
+  const sortedTags = Array.from(tagPostsMap.entries())
+    .map(([name, posts]) => ({ name, count: posts.size }))
     .sort((a, b) => b.count - a.count || a.name.localeCompare(b.name))
 
   console.log('TagsPage: Sorted tags:', sortedTags)
 
-  const totalPosts = Array.from(tagCounts.values()).reduce((acc, count) => acc + count, 0)
+  // 计算所有文章的总数（去重）
+  const allTaggedPosts = new Set<string>()
+  tagPostsMap.forEach(posts => posts.forEach(post => allTaggedPosts.add(post)))
+  const totalPosts = allTaggedPosts.size
 
   return (
     <div className="container mx-auto px-4 py-12">

@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { getAllCategories } from '@/lib/posts'
+import { getAllCategories, getAllPosts } from '@/lib/posts'
 import { createMetadata } from '@/lib/metadata'
 import type { Metadata } from 'next'
 
@@ -11,7 +11,15 @@ export const metadata: Metadata = createMetadata({
 
 export default function CategoriesPage() {
   const categories = getAllCategories()
-  const totalPosts = categories.reduce((acc, category) => acc + category.count, 0)
+  // 获取所有文章
+  const posts = getAllPosts()
+  // 统计有分类的文章总数（去重）
+  const categorizedPosts = new Set(
+    posts
+      .filter(post => Array.isArray(post.categories) && post.categories.length > 0)
+      .map(post => post.slug)
+  )
+  const totalPosts = categorizedPosts.size
 
   return (
     <div className="container mx-auto px-4 py-12">

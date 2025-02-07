@@ -2,6 +2,9 @@ import { getPostsByTag, getAllTagNames } from '@/lib/posts'
 import { createMetadata } from '@/lib/metadata'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
+import { format } from 'date-fns'
+import { zhCN } from 'date-fns/locale'
+import { ArrowLeftIcon } from '@heroicons/react/20/solid'
 
 export async function generateStaticParams() {
   const tags = getAllTagNames()
@@ -46,59 +49,51 @@ export default async function TagPage({ params }: TagPageProps) {
   }
 
   return (
-    <div className="container mx-auto px-4 py-16">
+    <div className="container mx-auto px-4 py-12">
       <div className="max-w-4xl mx-auto">
-        <header className="text-center mb-16">
-          <h1 className="text-4xl font-bold tracking-tight text-gray-900 dark:text-white sm:text-5xl">
-            #{decodedTag}
-          </h1>
-          <p className="mt-4 text-lg text-gray-600 dark:text-gray-400">共 {posts.length} 篇文章</p>
-        </header>
-
-        <div className="space-y-8">
-          {posts.map(post => (
-            <article
-              key={post.slug}
-              className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm p-6 hover:shadow-md transition-shadow"
-            >
-              <time className="text-sm text-gray-500 dark:text-gray-400">
-                {new Date(post.date).toLocaleDateString('zh-CN', {
-                  year: 'numeric',
-                  month: 'long',
-                  day: 'numeric',
-                })}
-              </time>
-              <h2 className="mt-2 text-xl font-semibold text-gray-900 dark:text-white">
-                <Link
-                  href={`/posts/${post.slug}`}
-                  className="hover:text-blue-600 dark:hover:text-blue-400"
-                >
-                  {post.title}
-                </Link>
-              </h2>
-              <p className="mt-3 text-gray-600 dark:text-gray-400 line-clamp-2">{post.excerpt}</p>
-              <div className="mt-4 flex flex-wrap gap-2">
-                {post.tags.map(tag => (
-                  <Link
-                    key={tag}
-                    href={`/tags/${encodeURIComponent(tag)}`}
-                    className="text-sm text-gray-600 hover:text-blue-600 dark:text-gray-400 dark:hover:text-blue-400"
-                  >
-                    #{tag}
-                  </Link>
-                ))}
-              </div>
-            </article>
-          ))}
-        </div>
-
-        <div className="mt-12 text-center">
+        <div className="mb-12">
           <Link
             href="/tags"
-            className="inline-flex items-center text-sm font-medium text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
+            className="group inline-flex items-center text-sm text-gray-600 hover:text-primary dark:text-gray-400 dark:hover:text-primary transition-colors"
           >
-            ← 返回标签云
+            <ArrowLeftIcon className="mr-2 h-4 w-4 transition-transform group-hover:-translate-x-1" />
+            返回标签云
           </Link>
+          <h1 className="mt-6 text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-gray-900 to-gray-600 dark:from-gray-100 dark:to-gray-400">
+            #{decodedTag}
+          </h1>
+          <div className="mt-4 flex items-center text-sm text-gray-600 dark:text-gray-400">
+            <span className="font-medium text-gray-900 dark:text-gray-100">{posts.length}</span>
+            <span className="ml-1">篇文章</span>
+          </div>
+        </div>
+
+        <div className="space-y-6">
+          {posts.map(post => (
+            <article key={post.slug} className="group">
+              <Link href={`/posts/${post.slug}`}>
+                <div className="rounded-lg border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 p-6 transition-all duration-200 hover:border-gray-300 dark:hover:border-gray-700 hover:shadow-lg active:scale-[0.98]">
+                  <h2 className="text-2xl font-semibold text-gray-900 dark:text-gray-100 group-hover:text-primary transition-colors">
+                    {post.title}
+                  </h2>
+                  <div className="mt-3 flex items-center gap-4 text-sm text-gray-600 dark:text-gray-400">
+                    <time>{format(new Date(post.date), 'PPP', { locale: zhCN })}</time>
+                    {post.readingTime && (
+                      <>
+                        <span>·</span>
+                        <span>{post.readingTime} 分钟阅读</span>
+                      </>
+                    )}
+                  </div>
+                  {post.excerpt && (
+                    <p className="mt-4 text-gray-600 dark:text-gray-400 line-clamp-2">
+                      {post.excerpt}
+                    </p>
+                  )}
+                </div>
+              </Link>
+            </article>
+          ))}
         </div>
       </div>
     </div>

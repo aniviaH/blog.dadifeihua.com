@@ -1,7 +1,14 @@
-import { getPostsByTag } from '@/lib/posts'
+import { getPostsByTag, getAllTagNames } from '@/lib/posts'
 import { createMetadata } from '@/lib/metadata'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
+
+export async function generateStaticParams() {
+  const tags = getAllTagNames()
+  return tags.map(tag => ({
+    tag: encodeURIComponent(tag),
+  }))
+}
 
 interface TagPageProps {
   params: Promise<{

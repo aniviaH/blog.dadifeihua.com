@@ -179,6 +179,11 @@ export function getPostBySlug(slug: string): Post | null {
   }
 }
 
+export function getAllTagNames(): string[] {
+  const tags = getAllTags()
+  return Object.keys(tags)
+}
+
 export function getAllTags(): { [key: string]: Post[] } {
   const posts = getAllPosts()
   const tags: { [key: string]: Post[] } = {}

@@ -7,6 +7,9 @@ import ThemeProvider from '@/components/ThemeProvider'
 import Link from 'next/link'
 import { FaGithub } from 'react-icons/fa'
 import { Suspense } from 'react'
+import Script from 'next/script'
+import { getAllPosts } from '@/lib/posts'
+import type { SearchablePost } from '@/lib/search'
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -23,11 +26,27 @@ export const metadata: Metadata = {
   description: '记录个人的思考、灵感和想法的空间',
 }
 
+function getSearchablePosts(): SearchablePost[] {
+  const posts = getAllPosts()
+  return posts.map(post => ({
+    slug: post.slug,
+    title: post.title,
+    excerpt: post.excerpt,
+    date: post.date,
+    categories: post.categories,
+    tags: post.tags,
+    coverImage: post.coverImage,
+  }))
+}
+
 export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode
 }>) {
+  const posts = getSearchablePosts()
+  const postsScript = `window.__POSTS__ = ${JSON.stringify(posts)};`
+
   return (
     <html lang="zh" suppressHydrationWarning>
       <head>
@@ -48,6 +67,7 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen bg-gray-50 dark:bg-gray-900`}
       >
+        <Script id="search-data" dangerouslySetInnerHTML={{ __html: postsScript }} />
         <ThemeProvider>
           <header className="sticky top-0 z-50 w-full border-b bg-white/95 dark:bg-gray-900/95 dark:border-gray-800">
             <div className="container mx-auto px-4 sm:px-6 lg:px-8">

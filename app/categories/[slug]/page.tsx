@@ -10,7 +10,7 @@ import { ArrowLeftIcon } from '@heroicons/react/20/solid'
 export async function generateStaticParams() {
   const categories = getAllCategories()
   return categories.map(category => ({
-    slug: category.slug,
+    slug: encodeURIComponent(category.slug),
   }))
 }
 

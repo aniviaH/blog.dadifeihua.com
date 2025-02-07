@@ -6,7 +6,7 @@ import { notFound } from 'next/navigation'
 export async function generateStaticParams() {
   const tags = getAllTagNames()
   return tags.map(tag => ({
-    tag: tag,
+    tag: encodeURIComponent(tag),
   }))
 }
 

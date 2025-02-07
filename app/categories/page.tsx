@@ -11,6 +11,7 @@ export const metadata: Metadata = createMetadata({
 
 export default function CategoriesPage() {
   const categories = getAllCategories()
+  const totalPosts = categories.reduce((acc, category) => acc + category.count, 0)
 
   return (
     <div className="container mx-auto px-4 py-12">
@@ -18,6 +19,9 @@ export default function CategoriesPage() {
         <h1 className="text-4xl font-bold mb-8 bg-clip-text text-transparent bg-gradient-to-r from-gray-900 to-gray-600 dark:from-gray-100 dark:to-gray-400">
           文章分类
         </h1>
+        <p className="text-lg text-gray-600 dark:text-gray-400 mb-8">
+          共 {categories.length} 个分类，{totalPosts} 篇文章
+        </p>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {categories.map(category => (
             <Link

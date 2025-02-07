@@ -52,6 +52,20 @@ npm run dev
 npm run build
 ```
 
-## 部署
+<!-- ## 部署 -->
 
-项目使用 Next.js，可以轻松部署到 Vercel 等平台。
+<!-- 项目使用 Next.js，可以轻松部署到 Vercel 等平台。 -->
+
+## 分支说明
+
+- `main` 分支存放开发和运行的代码
+- `main-static-export` 分支存放静态导出(export)的代码
+- `gh-pages` 分支存放静态导出(export)的代码，同时部署到了github pages里
+
+<!-- ## 部署到 Vercel
+
+<https://vercel.com/dashboard> -->
+
+## Github Pages
+
+<https://github.com/aniviah/blog.dadifeihua.com>

@@ -35,14 +35,15 @@ export default function TagCloud({ tags }: TagCloudProps) {
         <Link
           key={name}
           href={`/tags/${name}`}
-          className="transition-all duration-200 hover:-translate-y-1 hover:text-blue-500 dark:hover:text-blue-400"
+          className="text-gray-600 dark:text-gray-400 transition-all duration-200 hover:-translate-y-1 hover:text-primary dark:hover:text-primary"
           style={{
             fontSize: `${getFontSize(count)}rem`,
+            opacity: getFontSize(count) * 0.7 + 0.3, // 根据大小调整透明度
           }}
         >
-          <span className="relative group">
+          <span className="relative group font-medium">
             #{name}
-            <span className="absolute -top-8 left-1/2 -translate-x-1/2 px-2 py-1 bg-gray-900 dark:bg-gray-700 text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap">
+            <span className="absolute -top-8 left-1/2 -translate-x-1/2 px-2 py-1 bg-gray-800 text-white text-xs rounded shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap z-10">
               {count} 篇文章
             </span>
           </span>

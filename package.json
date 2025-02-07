@@ -13,8 +13,7 @@
     "prepare": "husky install",
     "lint-staged": "lint-staged",
     "format": "prettier --write .",
-    "format:check": "prettier --check .",
-    "deploy": "next build && touch out/.nojekyll && gh-pages -d out -t true"
+    "format:check": "prettier --check ."
   },
   "dependencies": {
     "@heroicons/react": "^2.2.0",

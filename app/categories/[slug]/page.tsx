@@ -9,9 +9,12 @@ import { ArrowLeftIcon } from '@heroicons/react/20/solid'
 
 export async function generateStaticParams() {
   const categories = getAllCategories()
-  return categories.map(category => ({
-    slug: encodeURIComponent(category.slug),
-  }))
+  console.log('Generating static params for categories:', categories)
+  return categories.map(category => {
+    const encodedSlug = encodeURIComponent(category.slug)
+    console.log('Category:', category.name, 'Slug:', category.slug, 'Encoded:', encodedSlug)
+    return { slug: encodedSlug }
+  })
 }
 
 interface CategoryPageProps {

@@ -5,9 +5,12 @@ import { notFound } from 'next/navigation'
 
 export async function generateStaticParams() {
   const tags = getAllTagNames()
-  return tags.map(tag => ({
-    tag: encodeURIComponent(tag),
-  }))
+  console.log('Generating static params for tags:', tags)
+  return tags.map(tag => {
+    const encodedTag = encodeURIComponent(tag)
+    console.log('Tag:', tag, 'Encoded:', encodedTag)
+    return { tag: encodedTag }
+  })
 }
 
 interface TagPageProps {
@@ -18,22 +21,24 @@ interface TagPageProps {
 
 export async function generateMetadata({ params }: TagPageProps) {
   const { tag } = await params
-  const posts = getPostsByTag(decodeURIComponent(tag))
+  const decodedTag = decodeURIComponent(tag)
+  const posts = getPostsByTag(decodedTag)
 
   if (!posts.length) {
     return {}
   }
 
   return createMetadata({
-    title: `#${tag} 的文章`,
-    description: `查看标签 #${tag} 下的所有文章`,
-    path: `/tags/${encodeURIComponent(tag)}`,
+    title: `#${decodedTag} 的文章`,
+    description: `查看标签 #${decodedTag} 下的所有文章`,
+    path: `/tags/${tag}`,
   })
 }
 
 export default async function TagPage({ params }: TagPageProps) {
   const { tag } = await params
-  const decodedTag = decodeURIComponent(decodeURIComponent(tag))
+  const decodedTag = decodeURIComponent(tag)
+  console.log('Tag page - received tag:', tag, 'decoded:', decodedTag)
   const posts = getPostsByTag(decodedTag)
 
   if (!posts.length) {

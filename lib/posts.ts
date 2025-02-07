@@ -88,7 +88,7 @@ export function getAllCategories(): Category[] {
   posts.forEach(post => {
     if (Array.isArray(post.categories)) {
       post.categories.forEach(categoryName => {
-        // 使用原始分类名作为 slug，这样可以保持中文
+        // 使用原始分类名作为 slug，以保持一致性
         const slug = categoryName
         console.log('Processing category:', { categoryName, slug })
 
@@ -185,8 +185,18 @@ export function getPostBySlug(slug: string): Post | null {
 }
 
 export function getAllTagNames(): string[] {
-  const tags = getAllTags()
-  return Object.keys(tags)
+  const posts = getAllPosts()
+  const tagSet = new Set<string>()
+
+  posts.forEach(post => {
+    if (Array.isArray(post.tags)) {
+      post.tags.forEach(tag => {
+        tagSet.add(tag)
+      })
+    }
+  })
+
+  return Array.from(tagSet)
 }
 
 export function getAllTags(): { [key: string]: Post[] } {
@@ -196,10 +206,12 @@ export function getAllTags(): { [key: string]: Post[] } {
   posts.forEach(post => {
     if (Array.isArray(post.tags)) {
       post.tags.forEach(tag => {
-        if (!tags[tag]) {
-          tags[tag] = []
+        const encodedTag = encodeURIComponent(tag)
+        console.log('Processing tag:', { tag, encodedTag })
+        if (!tags[encodedTag]) {
+          tags[encodedTag] = []
         }
-        tags[tag].push(post)
+        tags[encodedTag].push(post)
       })
     }
   })

@@ -1,4 +1,4 @@
-import { getAllTags } from '@/lib/posts'
+import { getAllPosts } from '@/lib/posts'
 import { createMetadata } from '@/lib/metadata'
 import TagCloud from '@/components/TagCloud'
 import Link from 'next/link'
@@ -10,15 +10,34 @@ export const metadata = createMetadata({
 })
 
 export default function TagsPage() {
-  const tagsWithPosts = getAllTags()
-  const tagCounts = Object.entries(tagsWithPosts)
-    .map(([name, posts]) => ({
-      name,
-      count: posts.length,
-    }))
+  console.log('TagsPage: Starting to process tags')
+  const posts = getAllPosts()
+  console.log('TagsPage: Found posts:', posts.length)
+
+  const tagCounts = new Map<string, number>()
+
+  // 统计每个标签的文章数量
+  posts.forEach(post => {
+    if (Array.isArray(post.tags)) {
+      console.log('TagsPage: Processing tags for post:', post.slug, post.tags)
+      post.tags.forEach(tag => {
+        const currentCount = tagCounts.get(tag) || 0
+        tagCounts.set(tag, currentCount + 1)
+        console.log('TagsPage: Tag count updated -', tag, currentCount + 1)
+      })
+    }
+  })
+
+  console.log('TagsPage: Raw tag counts:', Object.fromEntries(tagCounts))
+
+  // 转换为数组并排序
+  const sortedTags = Array.from(tagCounts.entries())
+    .map(([name, count]) => ({ name, count }))
     .sort((a, b) => b.count - a.count || a.name.localeCompare(b.name))
 
-  const totalPosts = Object.values(tagsWithPosts).reduce((acc, posts) => acc + posts.length, 0)
+  console.log('TagsPage: Sorted tags:', sortedTags)
+
+  const totalPosts = Array.from(tagCounts.values()).reduce((acc, count) => acc + count, 0)
 
   return (
     <div className="container mx-auto px-4 py-16">
@@ -28,16 +47,16 @@ export default function TagsPage() {
             标签云
           </h1>
           <p className="mt-4 text-lg text-gray-600 dark:text-gray-400">
-            共 {tagCounts.length} 个标签，{totalPosts} 篇文章
+            共 {sortedTags.length} 个标签，{totalPosts} 篇文章
           </p>
         </header>
 
         <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm p-8 mb-16">
-          <TagCloud tags={tagCounts} />
+          <TagCloud tags={sortedTags} />
         </div>
 
         <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
-          {tagCounts.map(({ name, count }, index) => (
+          {sortedTags.map(({ name, count }, index) => (
             <div
               key={name}
               className="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6 hover:shadow-md transition-shadow"

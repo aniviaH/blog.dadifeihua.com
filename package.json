@@ -3,7 +3,8 @@
   "version": "0.1.0",
   "private": true,
   "author": {
-    "name": "大地飞花"
+    "name": "大地飞花",
+    "url": "https://aniviah.github.io/blog.dadifeihua.com"
   },
   "scripts": {
     "dev": "next dev --turbopack",

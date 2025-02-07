@@ -10,23 +10,6 @@ const nextConfig: NextConfig = {
     minimumCacheTTL: 60,
     unoptimized: true,
   },
-  webpack: (config, { isServer }) => {
-    if (!isServer) {
-      config.optimization.minimizer = config.optimization.minimizer.map(plugin => {
-        if (plugin.constructor.name === 'TerserPlugin') {
-          return new plugin.constructor({
-            terserOptions: {
-              compress: {
-                drop_console: false,
-              },
-            },
-          })
-        }
-        return plugin
-      })
-    }
-    return config
-  },
 }
 
 export default nextConfig

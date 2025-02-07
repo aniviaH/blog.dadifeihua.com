@@ -88,8 +88,8 @@ export function getAllCategories(): Category[] {
   posts.forEach(post => {
     if (Array.isArray(post.categories)) {
       post.categories.forEach(categoryName => {
-        // 使用原始分类名作为 slug，以保持一致性
-        const slug = categoryName
+        // 使用编码后的分类名作为 slug
+        const slug = encodeURIComponent(categoryName)
         console.log('Processing category:', { categoryName, slug })
 
         const existing = categoriesMap.get(slug)
@@ -115,10 +115,8 @@ export function getAllCategories(): Category[] {
 export function getCategoryBySlug(slug: string): Category | null {
   console.log('Looking for category with slug:', slug)
   const categories = getAllCategories()
-  // 使用 decodeURIComponent 解码 URL 编码的 slug
-  const decodedSlug = decodeURIComponent(slug)
-  console.log('Decoded slug:', decodedSlug)
-  const category = categories.find(category => category.slug === decodedSlug)
+  // 直接使用编码后的 slug 进行比较
+  const category = categories.find(category => category.slug === slug)
   console.log('Found category:', category)
   return category || null
 }
@@ -206,12 +204,11 @@ export function getAllTags(): { [key: string]: Post[] } {
   posts.forEach(post => {
     if (Array.isArray(post.tags)) {
       post.tags.forEach(tag => {
-        const encodedTag = encodeURIComponent(tag)
-        console.log('Processing tag:', { tag, encodedTag })
-        if (!tags[encodedTag]) {
-          tags[encodedTag] = []
+        console.log('Processing tag:', tag)
+        if (!tags[tag]) {
+          tags[tag] = []
         }
-        tags[encodedTag].push(post)
+        tags[tag].push(post)
       })
     }
   })

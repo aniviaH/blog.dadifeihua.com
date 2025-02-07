@@ -13,6 +13,9 @@ const nextConfig: NextConfig = {
   compiler: {
     removeConsole: false,
   },
+  // 禁用自动路径解析
+  skipTrailingSlashRedirect: true,
+  skipMiddlewareUrlNormalize: true,
 }
 
 export default nextConfig

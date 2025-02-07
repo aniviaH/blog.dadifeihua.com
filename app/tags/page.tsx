@@ -69,7 +69,7 @@ export default function TagsPage() {
               </h2>
               <p className="text-gray-600 dark:text-gray-400">{count} 篇文章</p>
               <Link
-                href={`/tags/${name}`}
+                href={`/tags/${encodeURIComponent(name)}`}
                 className="mt-4 inline-flex items-center text-sm font-medium text-blue-600 hover:text-blue-500 dark:text-blue-400 dark:hover:text-blue-300"
               >
                 浏览文章 →

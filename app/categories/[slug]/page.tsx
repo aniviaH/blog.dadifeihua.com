@@ -11,9 +11,9 @@ export async function generateStaticParams() {
   const categories = getAllCategories()
   console.log('Generating static params for categories:', categories)
   return categories.map(category => {
-    const encodedSlug = encodeURIComponent(category.slug)
-    console.log('Category:', category.name, 'Slug:', category.slug, 'Encoded:', encodedSlug)
-    return { slug: encodedSlug }
+    // 使用编码后的 slug
+    console.log('Category:', category.name, 'Slug:', category.slug)
+    return { slug: category.slug }
   })
 }
 

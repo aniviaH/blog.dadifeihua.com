@@ -34,7 +34,7 @@ export default function TagCloud({ tags }: TagCloudProps) {
       {tags.map(({ name, count }) => (
         <Link
           key={name}
-          href={`/tags/${encodeURIComponent(name)}`}
+          href={`/tags/${name}`}
           className="transition-all duration-200 hover:-translate-y-1 hover:text-blue-500 dark:hover:text-blue-400"
           style={{
             fontSize: `${getFontSize(count)}rem`,

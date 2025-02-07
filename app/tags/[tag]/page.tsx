@@ -23,7 +23,7 @@ interface TagPageProps {
 export async function generateMetadata({ params }: TagPageProps) {
   const { tag } = await params
   const decodedTag = decodeURIComponent(tag)
-  const posts = getPostsByTag(decodedTag)
+  const posts = getPostsByTag(tag)
 
   if (!posts.length) {
     return {}
@@ -40,7 +40,7 @@ export default async function TagPage({ params }: TagPageProps) {
   const { tag } = await params
   const decodedTag = decodeURIComponent(tag)
   console.log('Tag page - received tag:', tag, 'decoded:', decodedTag)
-  const posts = getPostsByTag(decodedTag)
+  const posts = getPostsByTag(tag)
 
   if (!posts.length) {
     notFound()

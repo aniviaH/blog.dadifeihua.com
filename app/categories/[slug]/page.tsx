@@ -42,7 +42,8 @@ export async function generateMetadata({ params }: CategoryPageProps): Promise<M
 export default async function CategoryPage({ params }: CategoryPageProps) {
   try {
     const slug = (await params).slug
-    console.log('Category page - received slug:', slug)
+    const decodedSlug = decodeURIComponent(slug)
+    console.log('Category page - received slug:', slug, 'decoded:', decodedSlug)
 
     const category = getCategoryBySlug(slug)
     console.log('Category page - found category:', category)

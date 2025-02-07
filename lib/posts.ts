@@ -115,7 +115,8 @@ export function getCategoryBySlug(slug: string): Category | null {
   console.log('Looking for category with slug:', slug)
   const categories = getAllCategories()
   // 使用原始分类名进行比较
-  const category = categories.find(category => category.slug === decodeURIComponent(slug))
+  const decodedSlug = decodeURIComponent(slug)
+  const category = categories.find(category => category.slug === decodedSlug)
   console.log('Found category:', category)
   return category || null
 }

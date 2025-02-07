@@ -22,7 +22,7 @@ export default function CategoriesPage() {
           {categories.map(category => (
             <Link
               key={category.name}
-              href={`/categories/${category.slug}`}
+              href={`/categories/${encodeURIComponent(category.slug)}`}
               className="group relative overflow-hidden rounded-lg border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 p-6 transition-all duration-200 hover:border-gray-300 dark:hover:border-gray-700 hover:shadow-lg active:scale-[0.98]"
             >
               <div className="relative z-10">

@@ -27,7 +27,7 @@ export async function generateMetadata({ params }: TagPageProps) {
   return createMetadata({
     title: `#${tag} 的文章`,
     description: `查看标签 #${tag} 下的所有文章`,
-    path: `/tags/${tag}`,
+    path: `/tags/${encodeURIComponent(tag)}`,
   })
 }
 
@@ -76,7 +76,7 @@ export default async function TagPage({ params }: TagPageProps) {
                 {post.tags.map(tag => (
                   <Link
                     key={tag}
-                    href={`/tags/${tag}`}
+                    href={`/tags/${encodeURIComponent(tag)}`}
                     className="text-sm text-gray-600 hover:text-blue-600 dark:text-gray-400 dark:hover:text-blue-400"
                   >
                     #{tag}
